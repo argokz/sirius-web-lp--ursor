@@ -417,7 +417,7 @@ onMounted(() => {
 })
 </script>
 
-
+<style scoped>
 /* Global Page Wrapper & Elements */
 .homepage-wrapper {
   position: relative;
@@ -704,7 +704,7 @@ onMounted(() => {
   top: 8px;
   left: 50%;
   margin-left: -2px;
-  animation: scroll-wheel 2.s infinite;
+  animation: scroll-wheel 2s infinite;
 }
 
 @keyframes scroll-wheel {
