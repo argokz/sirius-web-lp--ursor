@@ -1,0 +1,27 @@
+{
+    "name": "sirius-web-frontend",
+    "version": "1.0.0",
+    "private": true,
+    "type": "module",
+    "scripts": {
+        "build": "nuxt build",
+        "dev": "nuxt dev --port 3006",
+        "generate": "nuxt generate",
+        "preview": "nuxt preview --port 3006",
+        "postinstall": "nuxt prepare",
+        "start": "node .output/server/index.mjs"
+    },
+    "dependencies": {
+        "@nuxtjs/vuetify": "^1.0.0",
+        "nuxt": "^3.11.0",
+        "vuetify": "^3.5.0",
+        "@mdi/font": "^7.4.47",
+        "pinia": "^2.1.7",
+        "@pinia/nuxt": "^0.5.1"
+    },
+    "devDependencies": {
+        "@nuxt/devtools": "latest",
+        "@types/node": "^20.10.0",
+        "typescript": "^5.3.3"
+    }
+}
