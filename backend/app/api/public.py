@@ -30,9 +30,4 @@ def get_page_content(slug: str, db: Session = Depends(get_db)):
     content = db.query(ContentItem).filter(ContentItem.page_id == page.id).all()
     return content
 
-@router.post("/contact")
-def send_contact_message(message: dict, db: Session = Depends(get_db)):
-    # Here you would integrate with email service
-    # For now, just return success
-    return {"message": "Contact message received", "status": "success"}
 

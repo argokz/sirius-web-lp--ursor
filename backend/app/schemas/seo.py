@@ -28,3 +28,22 @@ class SEOMetadataUpdate(BaseModel):
     twitter_description: Optional[str] = None
     twitter_image: Optional[str] = None
 
+
+class SEOMetadataResponse(BaseModel):
+    id: Optional[int] = None
+    page_id: int
+    title: Optional[str] = None
+    description: Optional[str] = None
+    keywords: Optional[str] = None
+    og_title: Optional[str] = None
+    og_description: Optional[str] = None
+    og_image: Optional[str] = None
+    og_type: str = "website"
+    twitter_card: str = "summary_large_image"
+    twitter_title: Optional[str] = None
+    twitter_description: Optional[str] = None
+    twitter_image: Optional[str] = None
+
+    class Config:
+        from_attributes = True
+

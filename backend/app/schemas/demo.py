@@ -10,6 +10,10 @@ class DemoRequestCreate(BaseModel):
     company: Optional[str] = None
     message: Optional[str] = None
 
+
+class DemoRequestStatusUpdate(BaseModel):
+    status: RequestStatus
+
 class DemoRequestResponse(BaseModel):
     id: int
     full_name: str

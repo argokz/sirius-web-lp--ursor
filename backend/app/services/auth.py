@@ -43,12 +43,19 @@ def authenticate_user(db: Session, email: str, password: str) -> Optional[User]:
         return None
     return user
 
-def create_user(db: Session, user: UserCreate) -> User:
+def create_user(
+    db: Session,
+    user: UserCreate,
+    is_superuser: bool = False,
+    is_active: bool = True
+) -> User:
     hashed_password = get_password_hash(user.password)
     db_user = User(
         email=user.email,
         hashed_password=hashed_password,
-        full_name=user.full_name
+        full_name=user.full_name,
+        is_superuser=is_superuser,
+        is_active=is_active
     )
     db.add(db_user)
     db.commit()

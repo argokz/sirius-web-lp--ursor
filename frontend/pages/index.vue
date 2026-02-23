@@ -300,7 +300,7 @@ import { onMounted, nextTick, ref, computed } from 'vue'
 import { useAdvancedAnimations } from '~/composables/useAdvancedAnimations'
 import WaterFlowAnimation from '~/components/WaterFlowAnimation.vue'
 const config = useRuntimeConfig()
-const { data: pageContent, pending: contentPending } = await useFetch('/api/public/pages/home/content', {
+const { data: pageContent, pending: contentPending } = await useFetch('/api/pages/home/content', {
   baseURL: config.public.apiBase,
   lazy: true,
   server: false

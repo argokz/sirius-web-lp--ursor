@@ -2,6 +2,7 @@ from fastapi import APIRouter, Depends, HTTPException, status
 from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm
 from sqlalchemy.orm import Session
 from datetime import timedelta
+import os
 from app.database import get_db
 from app.services.auth import (
     authenticate_user,
@@ -14,7 +15,7 @@ from app.models.user import User
 
 router = APIRouter()
 
-oauth2_scheme = OAuth2PasswordBearer(tokenUrl="api/auth/login")
+oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/api/auth/login")
 
 ACCESS_TOKEN_EXPIRE_MINUTES = 30
 
@@ -23,7 +24,6 @@ def get_current_user(
     db: Session = Depends(get_db)
 ) -> User:
     from jose import JWTError, jwt
-    import os
     
     credentials_exception = HTTPException(
         status_code=status.HTTP_401_UNAUTHORIZED,
@@ -41,19 +41,38 @@ def get_current_user(
         raise credentials_exception
     
     user = get_user_by_email(db, email=email)
-    if user is None:
+    if user is None or not user.is_active:
         raise credentials_exception
     return user
 
+
+def get_current_superuser(current_user: User = Depends(get_current_user)) -> User:
+    if not current_user.is_superuser:
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="Insufficient permissions"
+        )
+    return current_user
+
 @router.post("/register", response_model=UserResponse)
 def register(user: UserCreate, db: Session = Depends(get_db)):
+    users_count = db.query(User).count()
+    is_first_user = users_count == 0
+    allow_public_registration = os.getenv("ALLOW_PUBLIC_REGISTRATION", "false").lower() == "true"
+
+    if not is_first_user and not allow_public_registration:
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="Public registration is disabled"
+        )
+
     db_user = get_user_by_email(db, email=user.email)
     if db_user:
         raise HTTPException(
             status_code=400,
             detail="Email already registered"
         )
-    return create_user_service(db, user)
+    return create_user_service(db, user, is_superuser=is_first_user)
 
 @router.post("/login", response_model=Token)
 def login(

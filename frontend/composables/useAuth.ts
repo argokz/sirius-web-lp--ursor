@@ -1,10 +1,10 @@
-import { ref, computed } from 'vue'
+import { computed } from 'vue'
 
 export const useAuth = () => {
-  const token = ref<string | null>(null)
-  const user = ref<any>(null)
+  const token = useState<string | null>('auth_token', () => null)
+  const user = useState<any | null>('auth_user', () => null)
 
-  if (process.client) {
+  if (process.client && token.value === null) {
     token.value = localStorage.getItem('auth_token')
   }
 
@@ -13,15 +13,18 @@ export const useAuth = () => {
   const login = async (email: string, password: string) => {
     try {
       const config = useRuntimeConfig()
-      const formData = new FormData()
-      formData.append('username', email)
-      formData.append('password', password)
+      const formData = new URLSearchParams()
+      formData.set('username', email)
+      formData.set('password', password)
 
       const response = await $fetch<{ access_token: string; token_type: string }>(
         `${config.public.apiBase}/api/auth/login`,
         {
           method: 'POST',
-          body: formData
+          body: formData,
+          headers: {
+            'Content-Type': 'application/x-www-form-urlencoded'
+          }
         }
       )
 

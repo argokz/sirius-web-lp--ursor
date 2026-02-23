@@ -1,5 +1,6 @@
 from pydantic import BaseModel, EmailStr
 from typing import Optional
+from datetime import datetime
 
 class Token(BaseModel):
     access_token: str
@@ -26,4 +27,22 @@ class UserResponse(BaseModel):
 
     class Config:
         from_attributes = True
+
+
+class UserAdminCreate(BaseModel):
+    email: EmailStr
+    password: str
+    full_name: str
+    is_active: bool = True
+    is_superuser: bool = False
+
+
+class UserAdminUpdate(BaseModel):
+    full_name: Optional[str] = None
+    is_active: Optional[bool] = None
+    is_superuser: Optional[bool] = None
+
+
+class UserAdminResponse(UserResponse):
+    created_at: Optional[datetime] = None
 

@@ -1,6 +1,4 @@
-from fastapi import APIRouter, Depends
-from sqlalchemy.orm import Session
-from app.database import get_db
+from fastapi import APIRouter
 from pydantic import BaseModel, EmailStr
 from typing import Optional
 
@@ -14,8 +12,7 @@ class ContactMessage(BaseModel):
 
 @router.post("/contact")
 async def send_contact_message(
-    message: ContactMessage,
-    db: Session = Depends(get_db)
+    message: ContactMessage
 ):
     # Here you would integrate with email service (e.g., SendGrid, SMTP)
     # For now, just log and return success
