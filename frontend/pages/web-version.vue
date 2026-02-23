@@ -38,7 +38,7 @@
                 rounded="xl"
               >
                 <v-icon :icon="cap.icon" size="40" color="primary" class="mb-4" />
-                <h3>{{ cap.title }}</h3>
+                <h3 class="mb-2">{{ cap.title }}</h3>
                 <p>{{ cap.description }}</p>
               </v-card>
             </v-hover>
@@ -97,8 +97,8 @@ onMounted(() => {
 })
 
 useSEO({
-  title: 'Web-версия - ТГИД-07',
-  description: 'Удаленный доступ к системе теплоснабжения через браузер.'
+  title: 'Web-версия ТГИД-07: Доступ к сети из любой точки мира',
+  description: 'Мобильность для выездных бригад и прозрачность для руководства. Работайте с актуальной схемой теплоснабжения в браузере на любом устройстве.'
 })
 </script>
 

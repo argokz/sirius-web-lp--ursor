@@ -57,11 +57,8 @@
       <v-container>
         <v-row align="center">
           <v-col cols="12" md="6" class="scroll-reveal-left">
-            <div class="image-showcase glass-card apple-shadow overflow-hidden">
-              <div class="map-placeholder">
-                <v-icon icon="mdi-map-marker-path" size="64" color="white" />
-                <span class="text-white mt-4">Интерактивная ГИС модель</span>
-              </div>
+            <div class="image-showcase premium-border apple-shadow rounded-xl overflow-hidden p-0 bg-transparent">
+              <v-img src="/gis_map.png" alt="Интерактивная ГИС модель" cover class="rounded-xl transition-transform glow-hover h-100" />
             </div>
           </v-col>
           <v-col cols="12" md="6" class="scroll-reveal-right">
@@ -99,8 +96,8 @@ onMounted(() => {
 })
 
 useSEO({
-  title: 'ГИС и Паспортизация - ТГИД-07',
-  description: 'Электронная паспортизация и карта тепловых сетей с привязкой к ГИС.'
+  title: 'ГИС и Паспортизация тепловых сетей ТГИД-07 — Цифровой двойник',
+  description: 'Электронная карта и паспорта оборудования. Объедините технические данные с географической привязкой для мгновенного доступа к информации о любом участке сети.'
 })
 </script>
 

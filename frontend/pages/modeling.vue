@@ -22,18 +22,21 @@
       <v-container>
         <v-card class="glass-card pa-8 apple-shadow scroll-reveal">
           <v-row align="center">
-            <v-col cols="12" md="6">
-              <h2 class="mb-4">Мгновенный подбор оборудования</h2>
-              <p>Попробуйте наш калькулятор "интеллектуального сопла". Система автоматически подберет диаметр сужающего устройства на основе ваших параметров.</p>
+            <v-col cols="12" md="5">
+              <h2 class="mb-4 text-h4 font-weight-black text-slate-800">Мгновенный подбор оборудования</h2>
+              <p class="text-slate-600 mb-6 text-body-1">
+                Система автоматически подберет диаметр сужающего устройства на основе ваших параметров. 
+                Встроенный интеллектуальный алгоритм исключает ошибки проектирования.
+              </p>
               <div class="mt-6">
-                <v-btn color="primary" variant="outlined" rounded="pill">Инструменты инженера</v-btn>
+                <v-btn color="primary" variant="elevated" rounded="pill" size="large" class="shadow-premium">
+                  Попробовать демо
+                </v-btn>
               </div>
             </v-col>
-            <v-col cols="12" md="6">
-              <div class="interactive-diagram glass-effect pa-6 rounded-xl border">
-                 <div class="diagram-line primary"></div>
-                 <div class="diagram-node"></div>
-                 <div class="diagram-label">Узел 12-Б</div>
+            <v-col cols="12" md="7">
+              <div class="interactive-diagram overflow-hidden rounded-xl premium-border apple-shadow">
+                 <v-img src="/modeling_dashboard.png" alt="Моделирование тепловых сетей" cover class="rounded-xl transition-transform glow-hover" />
               </div>
             </v-col>
           </v-row>
@@ -151,8 +154,8 @@ onMounted(() => {
 })
 
 useSEO({
-  title: 'Моделирование и расчеты - ТГИД-07',
-  description: 'Высокоточные теплогидравлические расчеты и наладка режимов тепловых сетей.'
+  title: 'Моделирование и расчеты теплосетей ТГИД-07 — Точность 99.9%',
+  description: 'Создайте идеальную математическую модель вашей сети. Теплогидравлические расчеты любой сложности, наладка режимов и оптимизация оборудования с ТГИД-07.'
 })
 </script>
 

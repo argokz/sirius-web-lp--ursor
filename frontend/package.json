@@ -12,12 +12,14 @@
         "start": "node .output/server/index.mjs"
     },
     "dependencies": {
-        "@nuxtjs/vuetify": "^1.0.0",
-        "nuxt": "^3.11.0",
-        "vuetify": "^3.5.0",
         "@mdi/font": "^7.4.47",
-        "pinia": "^2.1.7",
-        "@pinia/nuxt": "^0.5.1"
+        "@nuxt/image": "^2.0.0",
+        "@nuxtjs/sitemap": "^7.6.0",
+        "@nuxtjs/vuetify": "^1.0.0",
+        "@pinia/nuxt": "^0.5.5",
+        "nuxt": "^3.11.0",
+        "pinia": "^2.3.1",
+        "vuetify": "^3.5.0"
     },
     "devDependencies": {
         "@nuxt/devtools": "latest",

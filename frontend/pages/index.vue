@@ -1,25 +1,13 @@
 <template>
   <div class="homepage-wrapper">
-    <!-- Full-page vertical pipe ornamental line -->
-    <div class="global-vertical-pipe">
-       <WaterFlowAnimation mode="vertical" />
-    </div>
-    <div class="global-vertical-pipe-2">
-       <WaterFlowAnimation mode="vertical" />
-    </div>
     <!-- Modern Hero Section -->
     <section class="hero-section">
-      <!-- Premium Mesh Background -->
+      <!-- Hero Background Layers -->
       <div class="mesh-background">
         <div class="mesh-blob mesh-blob-1"></div>
         <div class="mesh-blob mesh-blob-2"></div>
         <div class="mesh-blob mesh-blob-3"></div>
         <div class="mesh-blob mesh-blob-4"></div>
-      </div>
-
-      <!-- Vertical Pipe Animation Background (Subtle) -->
-      <div class="vertical-pipe-container">
-        <WaterFlowAnimation mode="vertical" />
       </div>
 
       <v-container class="hero-content">
@@ -85,41 +73,60 @@
       </div>
     </section>
 
-    <!-- Water Flow Animation Section -->
-    <section class="water-animation-section py-16 bg-pattern-grid">
-      <div class="blob-bg" style="top: -100px; left: -100px;"></div>
-      <v-container>
+    <!-- Water Flow Animation Section: Industrial Monitoring Dashboard -->
+    <section class="water-animation-section py-20 bg-dark-slate overflow-hidden">
+      <!-- Background Technical Details -->
+      <div class="schematic-overlay"></div>
+      
+      <v-container class="relative-box">
         <v-row align="center">
-          <v-col cols="12" md="6" class="scroll-reveal-left">
-            <div class="section-badge mb-4">
-              <v-chip color="info" variant="outlined" size="large" class="glass-effect">
-                Визуализация
-              </v-chip>
+          <v-col cols="12" md="5" class="scroll-reveal-left">
+            <div class="monitoring-panel pa-8">
+              <div class="panel-header mb-6">
+                <v-icon icon="mdi-shield-outline" color="primary" class="mr-2" />
+                <span class="panel-title text-uppercase font-weight-black letter-spacing-2 text-white">Система контроля потоков</span>
+              </div>
+              
+              <h2 class="section-title-alt mb-6 text-white">
+                Интеллектуальный мониторинг <span class="text-primary-light">тепловой сети</span>
+              </h2>
+              
+              <p class="section-text-premium text-slate-300 mb-8">
+                ТГИД-07 развертывает полнофункциональный цифровой двойник вашей сети, обеспечивая точность расчетов до 0.1%. Каждый литр теплоносителя под строгим программным контролем.
+              </p>
+              
+              <v-row dense>
+                <v-col cols="12" sm="6" v-for="(item, index) in flowFeatures" :key="index">
+                   <div class="monitoring-feature-item glass-card-dark pa-3 mb-2 d-flex align-center">
+                     <v-icon :icon="item.icon" size="small" color="primary" class="mr-2" />
+                     <span class="text-caption font-weight-bold text-white uppercase">{{ item.title }}</span>
+                   </div>
+                </v-col>
+              </v-row>
             </div>
-            <h2 class="section-title mb-4 primary-gradient-text">
-              Управление потоками теплоснабжения
-            </h2>
-            <p class="section-subtitle text-grey-darken-2 mb-6 font-weight-medium">
-              ТГИД-07 обеспечивает полный контроль и мониторинг потоков теплоносителя 
-              в системе теплоснабжения. Система отслеживает движение воды по трубам, 
-              контролирует давление и температуру на каждом участке сети.
-            </p>
-            <v-list class="bg-transparent">
-              <v-list-item
-                v-for="(item, index) in flowFeatures"
-                :key="index"
-                class="mb-2 glass-card interactive-hover"
-              >
-                <template v-slot:prepend>
-                  <v-icon :icon="item.icon" color="primary" />
-                </template>
-                <v-list-item-title class="font-weight-bold">{{ item.title }}</v-list-item-title>
-              </v-list-item>
-            </v-list>
           </v-col>
-          <v-col cols="12" md="6" class="scroll-reveal-right">
-            <div class="water-animation-wrapper glass-card apple-shadow">
-              <WaterFlowAnimation />
+          
+          <v-col cols="12" md="7" class="scroll-reveal-right">
+            <div class="visualization-dashboard">
+              <div class="dashboard-glare"></div>
+              <div class="water-animation-wrapper-alt glass-card-dark apple-shadow position-relative">
+                <ClientOnly fallback-tag="div" fallback="Загрузка системы мониторинга...">
+                  <WaterFlowAnimation mode="horizontal" showBadge label="SYSTEM_OK: FLOW_STABLE" />
+                </ClientOnly>
+              </div>
+              <!-- Floating Stats Overlay -->
+              <div class="dashboard-stats-card floating-detail-1">
+                <div class="stat-row">
+                  <span class="stat-label">ДАВЛЕНИЕ</span>
+                  <span class="stat-value text-primary">4.2 МПа</span>
+                </div>
+              </div>
+              <div class="dashboard-stats-card floating-detail-2">
+                <div class="stat-row">
+                  <span class="stat-label">ТЕМПЕРАТУРА</span>
+                  <span class="stat-value text-accent">95.4 °C</span>
+                </div>
+              </div>
             </div>
           </v-col>
         </v-row>
@@ -214,12 +221,12 @@
                     <v-icon :icon="benefit.icon" color="white" />
                   </v-avatar>
                 </template>
-                <v-list-item-title class="text-h6 mb-1 font-weight-bold">
+                <v-list-item-title class="text-h6 mb-2 font-weight-bold text-slate-800">
                   {{ benefit.title }}
                 </v-list-item-title>
-                <v-list-item-subtitle class="opacity-80">
+                <div class="benefit-description text-slate-600">
                   {{ benefit.description }}
-                </v-list-item-subtitle>
+                </div>
               </v-list-item>
             </v-list>
           </v-col>
@@ -293,8 +300,10 @@ import { onMounted, nextTick, ref, computed } from 'vue'
 import { useAdvancedAnimations } from '~/composables/useAdvancedAnimations'
 import WaterFlowAnimation from '~/components/WaterFlowAnimation.vue'
 const config = useRuntimeConfig()
-const { data: pageContent } = await useFetch('/api/public/pages/home/content', {
-  baseURL: config.public.apiBase
+const { data: pageContent, pending: contentPending } = await useFetch('/api/public/pages/home/content', {
+  baseURL: config.public.apiBase,
+  lazy: true,
+  server: false
 })
 
 const contentMap = computed(() => {
@@ -308,8 +317,8 @@ const contentMap = computed(() => {
 })
 
 useSEO({
-  title: 'Главная - Сириус ТГИД-07',
-  description: 'Многофункциональная автоматизированная система для управления теплоснабжением ТГИД-07'
+  title: 'СИРИУС ТГИД-07: Инновации в управлении тепловыми сетями',
+  description: 'Повысьте энергоэффективность вашего предприятия с помощью ТГИД-07. Единый цифровой двойник сети, расчеты любой сложности и мониторинг в реальном времени.'
 })
 useStructuredData()
 
@@ -323,81 +332,81 @@ const stats = [
 const features = [
   {
     icon: 'mdi-calculator-variant',
-    title: 'Моделирование и расчеты',
-    description: 'Высокоточные теплогидравлические расчеты и наладка режимов. Плановые, фактические и летние режимы с расчетом дросселирующих устройств',
+    title: 'Эталонное моделирование',
+    description: 'Создайте идеальный цифровой двойник вашей сети. Сверхточные теплогидравлические расчеты (до 0.1%) исключают ошибки при проектировании и наладке оборудования.',
     link: '/modeling'
   },
   {
     icon: 'mdi-file-document-multiple',
-    title: 'Паспортизация и ГИС',
-    description: 'Электронная паспортизация и карта тепловых сетей. Привязка к Google Maps, OpenStreetMap, ZGNC с автоматическим формированием паспортов',
+    title: 'Умная ГИС-паспортизация',
+    description: 'Оцифруйте каждый метр трубопровода. Мгновенный доступ к паспортам объектов с привязкой к интерактивной карте Google или OpenStreetMap.',
     link: '/gis'
   },
   {
-    icon: 'mdi-tools',
-    title: 'Эксплуатация и ремонты',
-    description: 'АРМ для служб эксплуатации: учет нарушений, опрессовка, планирование ремонтов, мониторинг коррозии',
+    icon: 'mdi-shield-alert',
+    title: 'Превентивная эксплуатация',
+    description: 'Управляйте ремонтами и опрессовкой как профи. Встроенный мониторинг коррозии позволяет предотвращать аварии до их возникновения.',
     link: '/maintenance'
   },
   {
-    icon: 'mdi-web',
-    title: 'Web-версия',
-    description: 'Мобильность и доступность данных. Работа в браузере на любом устройстве с разграничением прав доступа',
+    icon: 'mdi-devices',
+    title: 'Полная мобильность',
+    description: 'Ваша теплосеть всегда под рукой. Полноценный доступ к аналитике и режимам через браузер с любого устройства без сложных установок.',
     link: '/web-version'
   },
   {
     icon: 'mdi-chart-line',
-    title: 'Пьезометрические графики',
-    description: 'Автоматическое построение графиков давлений по любому выбранному пути для визуального анализа напоров',
+    title: 'Визуализация пьезометрии',
+    description: 'Анализируйте гидравлику в один клик. Автоматическое построение графиков давлений для мгновенного обнаружения зон кавитации и вскипания.',
     link: '/features'
   },
   {
-    icon: 'mdi-thermometer-lines',
-    title: 'Расчет тепловых потерь',
-    description: 'Модуль рассчитывает нормативные и фактические потери через изоляцию и утечки. База для экономического обоснования тарифов',
+    icon: 'mdi-fire-off',
+    title: 'Контроль тепловых потерь',
+    description: 'Сведите коммерческие потери к нулю. Точный расчет фактических и нормативных потерь для жесткого контроля бюджета и тарифов.',
     link: '/features'
   }
 ]
 
 const benefits = [
   {
-    icon: 'mdi-check-circle',
-    title: 'Масштабируемость',
-    description: 'Работа с крупными сетями мегаполисов с разделением на магистральные и распределительные уровни'
+    icon: 'mdi-city-variant',
+    title: 'Масштабируемость без границ',
+    description: 'От небольшого поселка до мегаполиса. Система легко справляется с тысячами узлов и сотнями километров магистральных сетей.'
   },
   {
-    icon: 'mdi-ruler',
-    title: 'Точность',
-    description: 'Расчеты на основе реальной геодезии и физических свойств трубопроводов'
+    icon: 'mdi-target',
+    title: 'Ювелирная точность расчетов',
+    description: 'Забудьте о примерных данных. Расчеты базируются на строгой геодезии, паспортах труб и законах термодинамики.'
   },
   {
-    icon: 'mdi-link-variant',
-    title: 'Интеграция',
-    description: 'Поддержка онлайн-карт (Google, OpenStreetMap) и экспорт данных в Excel/AutoCAD'
+    icon: 'mdi-connection',
+    title: 'Бесшовная интеграция',
+    description: 'Легкий обмен данными. Экспортируйте результаты в Excel и AutoCAD, используйте современные картографические подложки.'
   },
   {
-    icon: 'mdi-shield-check',
-    title: 'Единое информационное пространство',
-    description: 'Объединяет задачи производственно-технических служб, диспетчерских и инженеров-расчетчиков'
+    icon: 'mdi-account-group',
+    title: 'Единая экосистема компании',
+    description: 'Больше никаких разрозненных таблиц. Диспетчеры, инженеры и менеджмент работают в едином синхронизированном инфополе.'
   }
 ]
 
 const flowFeatures = [
   {
-    icon: 'mdi-water',
-    title: 'Мониторинг потоков в реальном времени'
+    icon: 'mdi-eye-check',
+    title: 'Тотальный контроль потоков (24/7)'
   },
   {
-    icon: 'mdi-thermometer',
-    title: 'Контроль температуры и давления'
+    icon: 'mdi-thermometer-high',
+    title: 'Мониторинг перепадов давления и \u0394T'
   },
   {
-    icon: 'mdi-chart-line',
-    title: 'Анализ гидравлических режимов'
+    icon: 'mdi-chart-bell',
+    title: 'Прогноз и предотвращение кавитации'
   },
   {
-    icon: 'mdi-alert',
-    title: 'Автоматическое обнаружение утечек'
+    icon: 'mdi-shield-alert',
+    title: 'Мгновенная локализация утечек'
   }
 ]
 
@@ -421,30 +430,8 @@ onMounted(() => {
 /* Global Page Wrapper & Elements */
 .homepage-wrapper {
   position: relative;
-  overflow: hidden;
-  background: #0f172a; /* Consistent dark theme start */
-}
-
-.global-vertical-pipe {
-  position: absolute;
-  top: 0;
-  right: 8%;
-  height: 100%;
-  width: 120px;
-  z-index: 1;
-  opacity: 0.25; /* Increased visibility */
-  pointer-events: none;
-}
-
-.global-vertical-pipe-2 {
-  position: absolute;
-  top: 0;
-  left: 5%;
-  height: 100%;
-  width: 80px;
-  z-index: 1;
-  opacity: 0.1;
-  pointer-events: none;
+  overflow: visible; /* Allow content to flow */
+  z-index: 1; /* Above the global animation layer (z-index: 0) */
 }
 
 /* Hero Section Premium Redesign */
@@ -634,6 +621,143 @@ onMounted(() => {
   transform: translateY(-12px);
   box-shadow: 0 30px 60px rgba(0,0,0,0.05);
   border-color: #3b82f6;
+}
+
+/* Benefits Section & Information Visibility */
+.benefit-description {
+  font-size: 0.9rem;
+  line-height: 1.5;
+  color: #64748b;
+  display: block; /* Ensure it's not clamped */
+  opacity: 1;
+}
+
+.benefit-item {
+  padding: 1.5rem;
+  border-radius: 20px;
+  transition: all 0.3s ease;
+  border: 1px solid rgba(0, 0, 0, 0.05);
+  background: white;
+}
+
+.benefit-item:hover {
+  border-color: #3b82f6;
+  box-shadow: 0 10px 30px rgba(59, 130, 246, 0.1);
+  transform: translateX(10px);
+}
+
+/* Industrial Monitoring Dashboard Redesign */
+.bg-dark-slate {
+  background: #0f172a;
+}
+
+.schematic-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  opacity: 0.05;
+  background-image: 
+    radial-gradient(#3b82f6 0.5px, transparent 0.5px),
+    linear-gradient(rgba(59, 130, 246, 0.1) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(59, 130, 246, 0.1) 1px, transparent 1px);
+  background-size: 20px 20px, 40px 40px, 40px 40px;
+  pointer-events: none;
+}
+
+.section-title-alt {
+  font-size: clamp(2rem, 5vw, 2.75rem);
+  font-weight: 850;
+  line-height: 1.1;
+  letter-spacing: -1px;
+}
+
+.text-primary-light {
+  color: #60a5fa;
+}
+
+.monitoring-panel {
+  position: relative;
+  z-index: 2;
+}
+
+.glass-card-dark {
+  background: rgba(30, 41, 59, 0.7);
+  backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 16px;
+  transition: all 0.3s ease;
+}
+
+.visualization-dashboard {
+  position: relative;
+  padding: 2rem;
+  z-index: 2;
+}
+
+.dashboard-glare {
+  position: absolute;
+  top: -20%;
+  right: -20%;
+  width: 80%;
+  height: 80%;
+  background: radial-gradient(circle, rgba(59, 130, 246, 0.15) 0%, transparent 70%);
+  filter: blur(40px);
+  pointer-events: none;
+}
+
+.water-animation-wrapper-alt {
+  height: 480px;
+  overflow: hidden;
+  box-shadow: 0 50px 100px -20px rgba(0,0,0,0.5);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.dashboard-stats-card {
+  position: absolute;
+  background: rgba(15, 23, 42, 0.9);
+  backdrop-filter: blur(10px);
+  border: 1px solid #3b82f6;
+  padding: 12px 20px;
+  border-radius: 12px;
+  box-shadow: 0 10px 20px rgba(0,0,0,0.4);
+  z-index: 3;
+}
+
+.floating-detail-1 {
+  top: 10%;
+  left: -5%;
+  animation: float-stat 4s ease-in-out infinite;
+}
+
+.floating-detail-2 {
+  bottom: 15%;
+  right: -5%;
+  animation: float-stat 5s ease-in-out infinite reverse;
+}
+
+.stat-row {
+  display: flex;
+  flex-direction: column;
+}
+
+.stat-label {
+  font-size: 0.6rem;
+  font-weight: 900;
+  color: #94a3b8;
+  letter-spacing: 1.5px;
+}
+
+.stat-value {
+  font-size: 1.1rem;
+  font-weight: 800;
+  font-family: 'Monaco', 'Consolas', monospace;
+}
+
+@keyframes float-stat {
+  0%, 100% { transform: translateY(0) translateX(0); }
+  50% { transform: translateY(-15px) translateX(5px); }
 }
 
 .feature-icon {

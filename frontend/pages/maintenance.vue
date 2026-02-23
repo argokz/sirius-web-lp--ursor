@@ -46,8 +46,8 @@
             </div>
           </v-col>
           <v-col cols="12" md="6" class="scroll-reveal-right">
-             <div class="icon-grid">
-                <v-icon v-for="i in 4" :key="i" icon="mdi-shield-alert" size="64" class="opacity-20 m-4" />
+             <div class="image-showcase premium-border apple-shadow rounded-xl overflow-hidden">
+                <v-img src="/maintenance_tablet.png" alt="Планшет мастера с дефектами" cover class="rounded-xl transition-transform glow-hover" />
              </div>
           </v-col>
         </v-row>
@@ -57,7 +57,7 @@
     <!-- Download CTA -->
     <section class="download-section py-16 text-center">
       <v-container>
-        <v-btn size="x-large" color="secondary" dark rounded="pill" class="cta-btn" to="/demo">
+        <v-btn size="x-large" color="secondary" dark rounded="pill" class="cta-btn shadow-premium" to="/demo">
           Скачать презентацию модуля Ремонты
           <v-icon end icon="mdi-download" />
         </v-btn>
@@ -81,8 +81,8 @@ onMounted(() => {
 })
 
 useSEO({
-  title: 'Эксплуатация и Ремонты - ТГИД-07',
-  description: 'Управление ремонтами, опрессовкой и мониторинг дефектов тепловых сетей.'
+  title: 'Управление эксплуатацией и ремонтами (ТОиР) ТГИД-07',
+  description: 'АРМ службы эксплуатации: учет повреждений, планирование ремонтов, мониторинг коррозии и опрессовка. Продлите срок службы вашей сети с ТГИД-07.'
 })
 </script>
 
