@@ -1,879 +1,301 @@
 <template>
-  <div class="homepage-wrapper">
-    <!-- Modern Hero Section -->
-    <section class="hero-section">
-      <!-- Hero Background Layers -->
-      <div class="mesh-background">
-        <div class="mesh-blob mesh-blob-1"></div>
-        <div class="mesh-blob mesh-blob-2"></div>
-        <div class="mesh-blob mesh-blob-3"></div>
-        <div class="mesh-blob mesh-blob-4"></div>
+  <CmsPageRenderer slug="home">
+    <div class="page">
+    <section class="hero">
+      <div class="container hero-grid">
+        <div class="hero-copy reveal">
+          <UBadge color="primary" variant="subtle" size="lg">
+            АСУП ТГИД-07 / цифровой контур теплоснабжения
+          </UBadge>
+          <h1 class="display-title">
+            ТГИД-07: единая платформа управления тепловыми сетями
+          </h1>
+          <p class="lead">
+            Профессиональный комплекс ПКФ «Сириус» для теплогидравлического моделирования, ГИС-паспортизации, диспетчеризации, ТОиР и предиктивной аналитики в корпоративной SQL-среде.
+          </p>
+          <div class="hero-actions">
+            <UButton to="/demo" size="xl" color="primary" trailing-icon="i-lucide-arrow-right">
+              Запросить демо
+            </UButton>
+            <UButton to="/product" size="xl" variant="outline" color="neutral">
+              Смотреть продукт
+            </UButton>
+          </div>
+          <div class="hero-tags" aria-label="Ключевые характеристики">
+            <span class="pill">Расчетные схемы</span>
+            <span class="pill">Паспорта объектов</span>
+            <span class="pill">Опрессовки и ТОиР</span>
+            <span class="pill">SCADA-ready</span>
+          </div>
+        </div>
+
+        <ProductMapDemo class="hero-demo reveal delay-2" />
       </div>
+    </section>
 
-      <v-container class="hero-content">
-        <v-row justify="center" align="center" class="min-height-screen">
-          <v-col cols="12" md="10" lg="8" class="text-center relative-box">
-            <div class="hero-badge-premium mb-6 fade-in-up">
-              <span class="glass-pill">
-                <v-icon start icon="mdi-shield-check" class="pulse-primary" />
-                {{ contentMap.hero_badge || 'Инновационная система управления ТГИД-07' }}
-              </span>
+    <section class="section">
+      <div class="container">
+        <span class="eyebrow">Ключевые возможности</span>
+        <h2 class="section-title">Вся инженерная картина в одном продукте</h2>
+        <div class="grid grid-4 feature-grid">
+          <article v-for="feature in features" :key="feature.title" class="card card-pad accent-card reveal">
+            <div class="icon-box">
+              <UIcon :name="feature.icon" />
             </div>
-            
-            <h1 class="hero-title-premium fade-in-up">
-              Будущее <span class="text-gradient">тепловой</span> энергетики
-            </h1>
-            
-            <p class="hero-subtitle-premium fade-in-up delay-1">
-              {{ contentMap.hero_subtitle || 'Единая цифровая экосистема для моделирования, паспортизации и оперативного управления городскими тепловыми сетями. Мощь SQL и точность инженерных расчетов.' }}
-            </p>
-
-            <div class="hero-actions-premium mt-10 fade-in-up delay-2">
-              <v-btn
-                size="x-large"
-                class="btn-premium primary-btn mr-md-6 mb-4"
-                to="/demo"
-                rounded="pill"
-              >
-                <span>Начать внедрение</span>
-                <v-icon end icon="mdi-chevron-right" class="btn-arrow" />
-              </v-btn>
-              
-              <v-btn
-                size="x-large"
-                variant="outlined"
-                class="btn-premium ghost-btn mb-4"
-                to="/product"
-                rounded="pill"
-              >
-                Технические характеристики
-              </v-btn>
-            </div>
-
-            <!-- Premium Stats -->
-            <div class="hero-stats-premium fade-in-up delay-3">
-              <v-row justify="center">
-                <v-col cols="6" sm="3" v-for="(stat, index) in stats" :key="index">
-                  <div class="stat-item-premium">
-                    <span class="stat-value-premium">{{ stat.value }}</span>
-                    <span class="stat-label-premium">{{ stat.label }}</span>
-                  </div>
-                </v-col>
-              </v-row>
-            </div>
-          </v-col>
-        </v-row>
-      </v-container>
-
-      <!-- Scroll Indicator -->
-      <div class="scroll-down-indicator">
-        <div class="mouse">
-          <div class="wheel"></div>
+            <h3>{{ feature.title }}</h3>
+            <p>{{ feature.text }}</p>
+          </article>
         </div>
       </div>
     </section>
 
-    <!-- Water Flow Animation Section: Industrial Monitoring Dashboard -->
-    <section class="water-animation-section py-20 bg-dark-slate overflow-hidden">
-      <!-- Background Technical Details -->
-      <div class="schematic-overlay"></div>
-      
-      <v-container class="relative-box">
-        <v-row align="center">
-          <v-col cols="12" md="5" class="scroll-reveal-left">
-            <div class="monitoring-panel pa-8">
-              <div class="panel-header mb-6">
-                <v-icon icon="mdi-shield-outline" color="primary" class="mr-2" />
-                <span class="panel-title text-uppercase font-weight-black letter-spacing-2 text-white">Система контроля потоков</span>
-              </div>
-              
-              <h2 class="section-title-alt mb-6 text-white">
-                Интеллектуальный мониторинг <span class="text-primary-light">тепловой сети</span>
-              </h2>
-              
-              <p class="section-text-premium text-slate-300 mb-8">
-                ТГИД-07 развертывает полнофункциональный цифровой двойник вашей сети, обеспечивая точность расчетов до 0.1%. Каждый литр теплоносителя под строгим программным контролем.
-              </p>
-              
-              <v-row dense>
-                <v-col cols="12" sm="6" v-for="(item, index) in flowFeatures" :key="index">
-                   <div class="monitoring-feature-item glass-card-dark pa-3 mb-2 d-flex align-center">
-                     <v-icon :icon="item.icon" size="small" color="primary" class="mr-2" />
-                     <span class="text-caption font-weight-bold text-white uppercase">{{ item.title }}</span>
-                   </div>
-                </v-col>
-              </v-row>
-            </div>
-          </v-col>
-          
-          <v-col cols="12" md="7" class="scroll-reveal-right">
-            <div class="visualization-dashboard">
-              <div class="dashboard-glare"></div>
-              <div class="water-animation-wrapper-alt glass-card-dark apple-shadow position-relative">
-                <ClientOnly fallback-tag="div" fallback="Загрузка системы мониторинга...">
-                  <WaterFlowAnimation mode="horizontal" showBadge label="SYSTEM_OK: FLOW_STABLE" />
-                </ClientOnly>
-              </div>
-              <!-- Floating Stats Overlay -->
-              <div class="dashboard-stats-card floating-detail-1">
-                <div class="stat-row">
-                  <span class="stat-label">ДАВЛЕНИЕ</span>
-                  <span class="stat-value text-primary">4.2 МПа</span>
-                </div>
-              </div>
-              <div class="dashboard-stats-card floating-detail-2">
-                <div class="stat-row">
-                  <span class="stat-label">ТЕМПЕРАТУРА</span>
-                  <span class="stat-value text-accent">95.4 °C</span>
-                </div>
-              </div>
-            </div>
-          </v-col>
-        </v-row>
-      </v-container>
+    <section class="section-tight">
+      <div class="container">
+        <span class="eyebrow">Результат внедрения</span>
+        <h2 class="section-title">Предприятие получает управляемую цифровую модель сети</h2>
+        <div class="detail-grid home-outcomes">
+          <article v-for="outcome in outcomes" :key="outcome.title" class="detail-card">
+            <h3>{{ outcome.title }}</h3>
+            <p>{{ outcome.text }}</p>
+          </article>
+        </div>
+      </div>
     </section>
 
-    <div class="section-divider"></div>
-
-    <!-- Features Section -->
-    <section class="features-section py-16 bg-pattern-dots">
-      <v-container>
-        <v-row>
-          <v-col cols="12" class="text-center mb-12 scroll-reveal-scale">
-            <div class="section-badge mb-4">
-              <v-chip color="primary" variant="outlined" size="large" class="glass-effect">
-                Возможности системы
-              </v-chip>
-            </div>
-            <h2 class="section-title mb-4">
-              Комплексное решение для управления теплоснабжением
-            </h2>
-            <p class="section-subtitle text-grey-darken-1">
-              Все необходимые инструменты в одной системе
+    <section class="section-tight">
+      <div class="container">
+        <div class="content-band split-panel">
+          <div>
+            <span class="eyebrow">Единое пространство</span>
+            <h2 class="section-title">Данные перестают жить в разных отделах</h2>
+            <p class="lead">
+              ТГИД-07 связывает расчетчиков, диспетчеров, ПТС, ремонтные службы и развитие сети. В одном контуре видны режимы, карта, договорные нагрузки, технические условия, паспорта и история событий.
             </p>
-          </v-col>
-        </v-row>
-        <v-row class="stagger-children">
-          <v-col
-            v-for="(feature, index) in features"
-            :key="index"
-            cols="12"
-            md="6"
-            lg="4"
-            :data-delay="index * 100"
-          >
-            <v-card
-              elevation="0"
-              class="feature-card glass-card apple-shadow interactive-hover"
-              :class="`feature-${index + 1}`"
-            >
-              <div class="feature-icon-wrapper">
-                <div class="feature-icon">
-                  <v-icon :icon="feature.icon" size="48" />
-                </div>
-              </div>
-              <v-card-title class="feature-title">
-                {{ feature.title }}
-              </v-card-title>
-              <v-card-text class="feature-description">
-                {{ feature.description }}
-              </v-card-text>
-              <v-spacer />
-              <v-card-actions>
-                <v-btn
-                  variant="text"
-                  color="primary"
-                  :to="feature.link"
-                  append-icon="mdi-arrow-right"
-                  class="font-weight-bold"
-                >
-                  Подробнее
-                </v-btn>
-              </v-card-actions>
-            </v-card>
-          </v-col>
-        </v-row>
-      </v-container>
+            <div class="tag-row">
+              <span class="pill">Плановые режимы</span>
+              <span class="pill">Аварийные сценарии</span>
+              <span class="pill">Перспективное развитие</span>
+            </div>
+          </div>
+          <div class="detail-grid">
+            <article v-for="space in informationSpace" :key="space.title" class="detail-card">
+              <h3>{{ space.title }}</h3>
+              <p>{{ space.text }}</p>
+            </article>
+          </div>
+        </div>
+      </div>
     </section>
 
-    <!-- Benefits Section -->
-    <section class="benefits-section py-16 bg-white">
-      <div class="blob-bg" style="bottom: 0; right: 0;"></div>
-      <v-container>
-        <v-row align="center">
-          <v-col cols="12" md="6" class="scroll-reveal-left">
-            <div class="section-badge mb-4">
-              <v-chip color="secondary" variant="outlined" size="large" class="glass-effect">
-                Преимущества
-              </v-chip>
-            </div>
-            <h2 class="section-title mb-6 primary-gradient-text">
-              Почему выбирают ТГИД-07?
-            </h2>
-            <v-list class="benefits-list bg-transparent">
-              <v-list-item
-                v-for="(benefit, index) in benefits"
-                :key="index"
-                class="benefit-item glass-card mb-4 interactive-hover"
-              >
-                <template v-slot:prepend>
-                  <v-avatar color="primary" size="44" class="mr-4 shadow-sm">
-                    <v-icon :icon="benefit.icon" color="white" />
-                  </v-avatar>
-                </template>
-                <v-list-item-title class="text-h6 mb-2 font-weight-bold text-slate-800">
-                  {{ benefit.title }}
-                </v-list-item-title>
-                <div class="benefit-description text-slate-600">
-                  {{ benefit.description }}
-                </div>
-              </v-list-item>
-            </v-list>
-          </v-col>
-          <v-col cols="12" md="6" class="scroll-reveal-right">
-            <div class="benefits-visual">
-              <div class="visual-card card-1 floating" data-duration="3" data-distance="15">
-                <v-icon icon="mdi-chart-line" size="64" color="primary" />
-                <p class="mt-4">Аналитика в реальном времени</p>
-              </div>
-              <div class="visual-card card-2 floating" data-duration="3.5" data-distance="20">
-                <v-icon icon="mdi-shield-check" size="64" color="secondary" />
-                <p class="mt-4">Надежность и безопасность</p>
-              </div>
-              <div class="visual-card card-3 floating" data-duration="2.5" data-distance="12">
-                <v-icon icon="mdi-speedometer" size="64" color="accent" />
-                <p class="mt-4">Высокая производительность</p>
-              </div>
-            </div>
-          </v-col>
-        </v-row>
-      </v-container>
+    <section class="section dark-panel">
+      <div class="container split">
+        <div>
+          <span class="eyebrow">Живая визуализация</span>
+          <h2 class="section-title">Потоки, режимы и риски видны без перегруза интерфейса</h2>
+          <p class="lead">
+            Анимации построены на SVG и CSS, работают плавно, отключаются при reduced motion и не требуют тяжелых 3D-библиотек. Эффект есть, а производительность остается рабочей.
+          </p>
+        </div>
+        <div class="flow-card">
+          <WaterFlowAnimation mode="horizontal" show-badge label="FLOW_STABLE" />
+        </div>
+      </div>
     </section>
 
-    <!-- CTA Section -->
-    <section class="cta-section py-16">
-      <v-container>
-        <v-card
-          elevation="8"
-          class="cta-card"
-          rounded="xl"
-        >
-          <v-card-text class="text-center pa-12">
-            <h2 class="text-h3 mb-4 text-white">
-              Готовы начать работу с ТГИД-07?
-            </h2>
-            <p class="text-h6 text-white mb-8 opacity-90">
-              Свяжитесь с нами для получения демо-версии системы и консультации
-            </p>
-            <div class="cta-actions">
-              <v-btn
-                size="x-large"
-                color="white"
-                variant="elevated"
-                to="/demo"
-                class="mr-4 mb-2"
-                rounded="xl"
-              >
-                <v-icon start icon="mdi-email" />
-                Оставить заявку
-              </v-btn>
-              <v-btn
-                size="x-large"
-                color="white"
-                variant="outlined"
-                to="/contacts"
-                rounded="xl"
-              >
-                <v-icon start icon="mdi-phone" />
-                Связаться с нами
-              </v-btn>
+    <section class="section">
+      <div class="container">
+        <span class="eyebrow">АРМ по ролям</span>
+        <h2 class="section-title">Каждая служба работает в своем сценарии, но с одной базой</h2>
+        <div class="grid grid-4 feature-grid">
+          <article v-for="role in roles" :key="role.title" class="card card-pad accent-card">
+            <div class="icon-box">
+              <UIcon :name="role.icon" />
             </div>
-          </v-card-text>
-        </v-card>
-      </v-container>
+            <h3>{{ role.title }}</h3>
+            <p>{{ role.text }}</p>
+          </article>
+        </div>
+      </div>
     </section>
-  </div>
+
+    <section class="section-tight">
+      <div class="container">
+        <div class="metric-grid">
+          <article v-for="metric in impact" :key="metric.title" class="metric-card">
+            <span class="metric-value">{{ metric.value }}</span>
+            <strong>{{ metric.title }}</strong>
+            <p>{{ metric.text }}</p>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="container">
+        <div class="cta card">
+          <div>
+            <span class="eyebrow">Готовность к запуску</span>
+            <h2 class="section-title">Готовы увидеть ТГИД-07 в работе?</h2>
+            <p class="lead">Подготовим демонстрацию под вашу структуру сети: режимы, карту, паспорта, дефекты, ремонты и web-доступ для выездных служб.</p>
+          </div>
+          <UButton to="/demo" size="xl" color="primary" trailing-icon="i-lucide-calendar-check">
+            Назначить демо
+          </UButton>
+        </div>
+      </div>
+    </section>
+    </div>
+    <template #append>
+      <ProductCapabilities />
+    </template>
+  </CmsPageRenderer>
 </template>
 
 <script setup lang="ts">
-import { onMounted, nextTick, ref, computed } from 'vue'
-import { useAdvancedAnimations } from '~/composables/useAdvancedAnimations'
 import WaterFlowAnimation from '~/components/WaterFlowAnimation.vue'
-const config = useRuntimeConfig()
-const { data: pageContent, pending: contentPending } = await useFetch('/api/pages/home/content', {
-  baseURL: config.public.apiBase,
-  lazy: true,
-  server: false
-})
-
-const contentMap = computed(() => {
-  const map: Record<string, string> = {}
-  if (pageContent.value) {
-    (pageContent.value as any[]).forEach(item => {
-      map[item.content_key] = item.content_value
-    })
-  }
-  return map
-})
 
 useSEO({
-  title: 'СИРИУС ТГИД-07: Инновации в управлении тепловыми сетями',
-  description: 'Повысьте энергоэффективность вашего предприятия с помощью ТГИД-07. Единый цифровой двойник сети, расчеты любой сложности и мониторинг в реальном времени.'
+  title: 'ТГИД-07 — ПКФ «Сириус»',
+  description: 'АСУП ТГИД-07: моделирование, ГИС, паспортизация, диспетчеризация, ремонты и эксплуатационная аналитика тепловых сетей от ПКФ «Сириус».'
 })
 useStructuredData()
 
-const stats = [
-  { value: '100%', label: 'Автоматизация' },
-  { value: '24/7', label: 'Мониторинг' },
-  { value: '10+', label: 'Лет опыта' },
-  { value: '50+', label: 'Проектов' }
+const metrics = [
+  { label: 'Давление', value: '4.2 МПа' },
+  { label: 'Температура', value: '95.4 C' },
+  { label: 'Потери', value: '1.8%' },
+  { label: 'Дефекты', value: '12' }
 ]
 
 const features = [
-  {
-    icon: 'mdi-calculator-variant',
-    title: 'Эталонное моделирование',
-    description: 'Создайте идеальный цифровой двойник вашей сети. Сверхточные теплогидравлические расчеты (до 0.1%) исключают ошибки при проектировании и наладке оборудования.',
-    link: '/modeling'
-  },
-  {
-    icon: 'mdi-file-document-multiple',
-    title: 'Умная ГИС-паспортизация',
-    description: 'Оцифруйте каждый метр трубопровода. Мгновенный доступ к паспортам объектов с привязкой к интерактивной карте Google или OpenStreetMap.',
-    link: '/gis'
-  },
-  {
-    icon: 'mdi-shield-alert',
-    title: 'Превентивная эксплуатация',
-    description: 'Управляйте ремонтами и опрессовкой как профи. Встроенный мониторинг коррозии позволяет предотвращать аварии до их возникновения.',
-    link: '/maintenance'
-  },
-  {
-    icon: 'mdi-devices',
-    title: 'Полная мобильность',
-    description: 'Ваша теплосеть всегда под рукой. Полноценный доступ к аналитике и режимам через браузер с любого устройства без сложных установок.',
-    link: '/web-version'
-  },
-  {
-    icon: 'mdi-chart-line',
-    title: 'Визуализация пьезометрии',
-    description: 'Анализируйте гидравлику в один клик. Автоматическое построение графиков давлений для мгновенного обнаружения зон кавитации и вскипания.',
-    link: '/features'
-  },
-  {
-    icon: 'mdi-fire-off',
-    title: 'Контроль тепловых потерь',
-    description: 'Сведите коммерческие потери к нулю. Точный расчет фактических и нормативных потерь для жесткого контроля бюджета и тарифов.',
-    link: '/features'
-  }
+  { icon: 'i-lucide-calculator', title: 'Теплогидравлические расчеты', text: 'Плановые, фактические, летние и аварийные режимы с учетом геодезии, температурных графиков и состояния оборудования.' },
+  { icon: 'i-lucide-map', title: 'ГИС и паспорта', text: 'Карта сети, тепловые камеры, трубопроводы, арматура, потребители, документы и история изменений в единой базе.' },
+  { icon: 'i-lucide-activity', title: 'Эксплуатация и ИСУПА', text: 'Дефекты, опрессовки, шурфовки, коррозия, заявки, ремонтные контуры и аналитика повреждаемости по участкам.' },
+  { icon: 'i-lucide-radio-tower', title: 'Диспетчерский контур', text: 'Сравнение телеметрии с расчетной моделью, поиск отклонений, контроль насосных станций и критичных зон.' }
 ]
 
-const benefits = [
-  {
-    icon: 'mdi-city-variant',
-    title: 'Масштабируемость без границ',
-    description: 'От небольшого поселка до мегаполиса. Система легко справляется с тысячами узлов и сотнями километров магистральных сетей.'
-  },
-  {
-    icon: 'mdi-target',
-    title: 'Ювелирная точность расчетов',
-    description: 'Забудьте о примерных данных. Расчеты базируются на строгой геодезии, паспортах труб и законах термодинамики.'
-  },
-  {
-    icon: 'mdi-connection',
-    title: 'Бесшовная интеграция',
-    description: 'Легкий обмен данными. Экспортируйте результаты в Excel и AutoCAD, используйте современные картографические подложки.'
-  },
-  {
-    icon: 'mdi-account-group',
-    title: 'Единая экосистема компании',
-    description: 'Больше никаких разрозненных таблиц. Диспетчеры, инженеры и менеджмент работают в едином синхронизированном инфополе.'
-  }
+const informationSpace = [
+  { title: 'Расчетные схемы', text: 'Плановые, аварийные и перспективные режимы хранятся как управляемые сценарии, а не как разрозненные файлы.' },
+  { title: 'Карты и мнемосхемы', text: 'Онлайн-подложки, городские планы и детальные схемы оборудования помогают быстро найти нужный объект.' },
+  { title: 'Паспорта и справочники', text: 'Трубопроводы, камеры, арматура, насосы, изоляция, материалы и заводские данные доступны из карточек объектов.' },
+  { title: 'Нагрузки и ТУ', text: 'Договорные нагрузки абонентов и технические условия на подключение новых объектов связаны с развитием сети.' }
 ]
 
-const flowFeatures = [
-  {
-    icon: 'mdi-eye-check',
-    title: 'Тотальный контроль потоков (24/7)'
-  },
-  {
-    icon: 'mdi-thermometer-high',
-    title: 'Мониторинг перепадов давления и \u0394T'
-  },
-  {
-    icon: 'mdi-chart-bell',
-    title: 'Прогноз и предотвращение кавитации'
-  },
-  {
-    icon: 'mdi-shield-alert',
-    title: 'Мгновенная локализация утечек'
-  }
+const outcomes = [
+  { title: 'Единая достоверная схема', text: 'Расчетная модель, карта, паспорта и события эксплуатации опираются на один набор данных, поэтому решения не расходятся между отделами.' },
+  { title: 'Быстрее диагностика режима', text: 'Инженер видит давление, теплопотери, узкие места и последствия переключений до физического вмешательства в сеть.' },
+  { title: 'Планирование ремонтов по фактам', text: 'Дефекты, опрессовки, шурфовки и коррозия превращаются в ремонтные контуры, приоритеты и отчетность.' },
+  { title: 'Прозрачность для руководства', text: 'Риски, аварийность, эффект регулировки и состояние активов собираются в понятную управленческую картину.' }
 ]
 
-const { observeElements } = useScrollAnimation()
-const { initFloatingAnimation } = useAdvancedAnimations()
+const roles = [
+  { icon: 'i-lucide-gauge', title: 'Служба режимов', text: 'Математическая модель, пьезометрические графики, дросселирующие устройства и анализ отклонений.' },
+  { icon: 'i-lucide-building-2', title: 'Перспективное развитие', text: 'Оценка подключений, технические условия, резерв мощности и сценарии роста городской нагрузки.' },
+  { icon: 'i-lucide-hard-hat', title: 'Производственная служба', text: 'Инвентаризация, паспортизация камер, магистралей, вводов зданий и оборудования на карте.' },
+  { icon: 'i-lucide-wrench', title: 'Ремонтные службы', text: 'Планы ТОиР, дефекты, опрессовки, заявки на устранение аварий и контроль статусов работ.' }
+]
 
-onMounted(() => {
-  observeElements()
-  // Инициализация floating анимаций
-  if (process.client) {
-    nextTick(() => {
-      document.querySelectorAll('.floating').forEach((el) => {
-        initFloatingAnimation(el as HTMLElement)
-      })
-    })
-  }
-})
+const impact = [
+  { value: '15-20%', title: 'меньше аварийности', text: 'По оценкам разработчиков, СППР и предиктивная аналитика помогают снизить аварийность за счет раннего выявления зон риска.' },
+  { value: '5-20%', title: 'снижение затрат', text: 'Иерархические расчетные технологии поддерживают оптимизацию генерации тепла и перекачки теплоносителя.' },
+  { value: '0.1 мм', title: 'точность настройки', text: 'Расчет сопел и дроссельных диафрагм позволяет балансировать сопротивление сети до физической установки устройств.' }
+]
 </script>
 
 <style scoped>
-/* Global Page Wrapper & Elements */
-.homepage-wrapper {
+.hero {
   position: relative;
-  overflow: visible; /* Allow content to flow */
-  z-index: 1; /* Above the global animation layer (z-index: 0) */
+  padding: 136px 0 80px;
+  border-bottom: 1px solid var(--line);
 }
 
-/* Hero Section Premium Redesign */
-.hero-section {
-  position: relative;
-  min-height: 100vh;
+.hero-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 48px;
+}
+
+.hero-grid .display-title {
+  max-width: 1040px;
+  font-size: clamp(2.6rem, 6vw, 5rem);
+}
+
+.hero-actions,
+.hero-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-top: 34px;
+}
+
+.hero-tags {
+  margin-top: 24px;
+}
+
+.hero-demo {
+  min-width: 0;
+}
+
+.feature-grid {
+  margin-top: 34px;
+}
+
+.home-outcomes {
+  margin-top: 30px;
+}
+
+.feature-grid h3 {
+  margin: 22px 0 8px;
+  color: var(--ink);
+  font-family: var(--serif);
+  font-size: 1.4rem;
+  font-weight: 400;
+  line-height: 1.2;
+}
+
+.feature-grid p {
+  margin: 0;
+  color: var(--muted);
+  line-height: 1.65;
+}
+
+.split {
+  display: grid;
+  grid-template-columns: 0.9fr 1.1fr;
+  gap: 48px;
+  align-items: center;
+}
+
+.flow-card {
+  height: 360px;
+  overflow: hidden;
+  border: 1px solid var(--line-dark);
+  border-radius: var(--radius);
+  background: var(--dark-2);
+}
+
+.cta {
   display: flex;
   align-items: center;
-  overflow: hidden;
-  background: #0f172a;
+  justify-content: space-between;
+  gap: 24px;
+  padding: 40px;
 }
 
-.mesh-background {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  z-index: 0;
-  filter: blur(100px);
-  opacity: 0.6;
+@media (max-width: 980px) {
+  .split {
+    grid-template-columns: 1fr;
+  }
 }
 
-.mesh-blob {
-  position: absolute;
-  border-radius: 50%;
-  mix-blend-mode: screen;
-  animation: mesh-float 20s infinite alternate ease-in-out;
-}
+@media (max-width: 640px) {
+  .hero {
+    padding: 104px 0 56px;
+  }
 
-.mesh-blob-1 { width: 600px; height: 600px; background: #3b82f6; top: -10%; left: -10%; }
-.mesh-blob-2 { width: 500px; height: 500px; background: #8b5cf6; bottom: -10%; right: -10%; animation-delay: -5s; }
-.mesh-blob-3 { width: 400px; height: 400px; background: #ef4444; top: 40%; left: 30%; animation-delay: -10s; }
-.mesh-blob-4 { width: 450px; height: 450px; background: #0ea5e9; bottom: 20%; left: 10%; animation-delay: -15s; }
-
-@keyframes mesh-float {
-  0% { transform: translate(0, 0) rotate(0deg) scale(1); }
-  100% { transform: translate(100px, 50px) rotate(90deg) scale(1.1); }
-}
-
-.hero-content {
-  position: relative;
-  z-index: 2;
-}
-
-.min-height-screen {
-  min-height: 100vh;
-}
-
-.hero-badge-premium {
-  display: inline-block;
-}
-
-.glass-pill {
-  background: rgba(255, 255, 255, 0.05);
-  backdrop-filter: blur(12px);
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  padding: 8px 20px;
-  border-radius: 100px;
-  color: rgba(255, 255, 255, 0.9);
-  font-weight: 600;
-  font-size: 0.9rem;
-  letter-spacing: 1px;
-  text-transform: uppercase;
-}
-
-.hero-title-premium {
-  font-size: clamp(3rem, 8vw, 6rem);
-  font-weight: 950;
-  line-height: 1.05;
-  color: white;
-  margin-bottom: 2rem;
-  letter-spacing: -3px;
-}
-
-.text-gradient {
-  background: linear-gradient(135deg, #60a5fa 0%, #a78bfa 100%);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-}
-
-.hero-subtitle-premium {
-  font-size: clamp(1rem, 2vw, 1.4rem);
-  line-height: 1.8;
-  color: rgba(255, 255, 255, 0.7);
-  max-width: 800px;
-  margin: 0 auto;
-  font-weight: 500;
-}
-
-.hero-stats-premium {
-  margin-top: 5rem;
-  padding-top: 3rem;
-  border-top: 1px solid rgba(255, 255, 255, 0.1);
-}
-
-.stat-item-premium {
-  text-align: center;
-}
-
-.stat-value-premium {
-  font-size: clamp(2rem, 5vw, 3.5rem);
-  font-weight: 900;
-  color: white;
-  margin-bottom: 0.25rem;
-  display: block;
-}
-
-.stat-label-premium {
-  font-size: 0.8rem;
-  text-transform: uppercase;
-  letter-spacing: 2px;
-  color: rgba(255, 255, 255, 0.5);
-  font-weight: 700;
-}
-
-.btn-premium {
-  font-weight: 800 !important;
-  letter-spacing: 0.8px !important;
-  text-transform: none !important;
-  padding: 0 45px !important;
-  height: 64px !important;
-  transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275) !important;
-}
-
-.primary-btn {
-  background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%) !important;
-  color: white !important;
-  box-shadow: 0 20px 40px rgba(37, 99, 235, 0.3) !important;
-}
-
-.primary-btn:hover {
-  transform: translateY(-5px);
-  box-shadow: 0 25px 50px rgba(37, 99, 235, 0.4) !important;
-}
-
-.ghost-btn {
-  border: 1px solid rgba(255, 255, 255, 0.2) !important;
-  color: white !important;
-  backdrop-filter: blur(8px);
-}
-
-.ghost-btn:hover {
-  background: rgba(255, 255, 255, 0.1) !important;
-  border-color: rgba(255, 255, 255, 0.5) !important;
-}
-
-/* Restored Section Styles */
-.water-animation-section, .features-section, .benefits-section {
-  position: relative;
-  z-index: 2;
-}
-
-.water-animation-section {
-  background: #f8fafc;
-}
-
-.section-title {
-  font-size: clamp(2rem, 5vw, 3rem);
-  font-weight: 800;
-  color: #0f172a;
-  letter-spacing: -1px;
-}
-
-.water-animation-wrapper {
-  height: 450px;
-  border-radius: 32px;
-  overflow: hidden;
-  box-shadow: 0 40px 80px rgba(0,0,0,0.08);
-}
-
-/* Features restored */
-.features-section {
-  background: #ffffff;
-}
-
-.feature-card {
-  height: 100%;
-  padding: 3rem;
-  border-radius: 24px;
-  transition: all 0.4s cubic-bezier(0.165, 0.84, 0.44, 1);
-  background: white;
-  border: 1px solid #f1f5f9;
-}
-
-.feature-card:hover {
-  transform: translateY(-12px);
-  box-shadow: 0 30px 60px rgba(0,0,0,0.05);
-  border-color: #3b82f6;
-}
-
-/* Benefits Section & Information Visibility */
-.benefit-description {
-  font-size: 0.9rem;
-  line-height: 1.5;
-  color: #64748b;
-  display: block; /* Ensure it's not clamped */
-  opacity: 1;
-}
-
-.benefit-item {
-  padding: 1.5rem;
-  border-radius: 20px;
-  transition: all 0.3s ease;
-  border: 1px solid rgba(0, 0, 0, 0.05);
-  background: white;
-}
-
-.benefit-item:hover {
-  border-color: #3b82f6;
-  box-shadow: 0 10px 30px rgba(59, 130, 246, 0.1);
-  transform: translateX(10px);
-}
-
-/* Industrial Monitoring Dashboard Redesign */
-.bg-dark-slate {
-  background: #0f172a;
-}
-
-.schematic-overlay {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  opacity: 0.05;
-  background-image: 
-    radial-gradient(#3b82f6 0.5px, transparent 0.5px),
-    linear-gradient(rgba(59, 130, 246, 0.1) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(59, 130, 246, 0.1) 1px, transparent 1px);
-  background-size: 20px 20px, 40px 40px, 40px 40px;
-  pointer-events: none;
-}
-
-.section-title-alt {
-  font-size: clamp(2rem, 5vw, 2.75rem);
-  font-weight: 850;
-  line-height: 1.1;
-  letter-spacing: -1px;
-}
-
-.text-primary-light {
-  color: #60a5fa;
-}
-
-.monitoring-panel {
-  position: relative;
-  z-index: 2;
-}
-
-.glass-card-dark {
-  background: rgba(30, 41, 59, 0.7);
-  backdrop-filter: blur(12px);
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  border-radius: 16px;
-  transition: all 0.3s ease;
-}
-
-.visualization-dashboard {
-  position: relative;
-  padding: 2rem;
-  z-index: 2;
-}
-
-.dashboard-glare {
-  position: absolute;
-  top: -20%;
-  right: -20%;
-  width: 80%;
-  height: 80%;
-  background: radial-gradient(circle, rgba(59, 130, 246, 0.15) 0%, transparent 70%);
-  filter: blur(40px);
-  pointer-events: none;
-}
-
-.water-animation-wrapper-alt {
-  height: 480px;
-  overflow: hidden;
-  box-shadow: 0 50px 100px -20px rgba(0,0,0,0.5);
-  border: 1px solid rgba(255, 255, 255, 0.1);
-}
-
-.dashboard-stats-card {
-  position: absolute;
-  background: rgba(15, 23, 42, 0.9);
-  backdrop-filter: blur(10px);
-  border: 1px solid #3b82f6;
-  padding: 12px 20px;
-  border-radius: 12px;
-  box-shadow: 0 10px 20px rgba(0,0,0,0.4);
-  z-index: 3;
-}
-
-.floating-detail-1 {
-  top: 10%;
-  left: -5%;
-  animation: float-stat 4s ease-in-out infinite;
-}
-
-.floating-detail-2 {
-  bottom: 15%;
-  right: -5%;
-  animation: float-stat 5s ease-in-out infinite reverse;
-}
-
-.stat-row {
-  display: flex;
-  flex-direction: column;
-}
-
-.stat-label {
-  font-size: 0.6rem;
-  font-weight: 900;
-  color: #94a3b8;
-  letter-spacing: 1.5px;
-}
-
-.stat-value {
-  font-size: 1.1rem;
-  font-weight: 800;
-  font-family: 'Monaco', 'Consolas', monospace;
-}
-
-@keyframes float-stat {
-  0%, 100% { transform: translateY(0) translateX(0); }
-  50% { transform: translateY(-15px) translateX(5px); }
-}
-
-.feature-icon {
-  width: 70px;
-  height: 70px;
-  border-radius: 18px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  margin-bottom: 2rem;
-  color: white;
-  background: linear-gradient(135deg, #3b82f6, #8b5cf6);
-}
-
-/* Benefits restored */
-.benefit-item {
-  padding: 1.5rem;
-  border-radius: 20px;
-  transition: all 0.3s ease;
-  border: 1px solid transparent;
-}
-
-.benefit-item:hover {
-  background: white;
-  border-color: #f1f5f9;
-  box-shadow: 0 10px 30px rgba(0,0,0,0.03);
-  transform: translateX(10px);
-}
-
-/* Visual components */
-.visual-card {
-  background: white;
-  border-radius: 24px;
-  padding: 2rem;
-  box-shadow: 0 20px 40px rgba(0,0,0,0.05);
-  text-align: center;
-}
-
-/* CTA restored */
-.cta-card {
-  background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
-  overflow: hidden;
-}
-
-/* Scroll indicator */
-.scroll-down-indicator {
-  position: absolute;
-  bottom: 40px;
-  left: 50%;
-  transform: translateX(-50%);
-  z-index: 2;
-}
-
-.mouse {
-  width: 26px;
-  height: 44px;
-  border: 2px solid rgba(255, 255, 255, 0.3);
-  border-radius: 20px;
-  position: relative;
-}
-
-.wheel {
-  width: 4px;
-  height: 8px;
-  background: #3b82f6;
-  border-radius: 2px;
-  position: absolute;
-  top: 8px;
-  left: 50%;
-  margin-left: -2px;
-  animation: scroll-wheel 2s infinite;
-}
-
-@keyframes scroll-wheel {
-  0% { transform: translateY(0); opacity: 1; }
-  100% { transform: translateY(15px); opacity: 0; }
-}
-
-@keyframes fadeInUp {
-  from { opacity: 0; transform: translateY(40px); }
-  to { opacity: 1; transform: translateY(0); }
-}
-
-.fade-in-up {
-  animation: fadeInUp 1s cubic-bezier(0.2, 0.8, 0.2, 1) forwards;
-}
-
-/* Responsive */
-.primary-btn:hover .btn-arrow {
-  transform: translateX(5px);
-}
-
-.btn-arrow {
-  transition: transform 0.3s ease;
-}
-
-.glass-pill:hover {
-  background: rgba(255, 255, 255, 0.1);
-  transform: translateY(-2px);
-  transition: all 0.3s ease;
-}
-
-.text-gradient {
-  background: linear-gradient(135deg, #60a5fa 0%, #a78bfa 50%, #60a5fa 100%);
-  background-size: 200% auto;
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  animation: shine 3s linear infinite;
-}
-
-@keyframes shine {
-  to { background-position: 200% center; }
-}
-
-.stat-item-premium:hover {
-  transform: scale(1.05);
-  transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  .cta {
+    flex-direction: column;
+    align-items: flex-start;
+  }
 }
 </style>

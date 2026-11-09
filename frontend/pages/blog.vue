@@ -1,65 +1,66 @@
 <template>
-  <v-container class="my-10">
-    <v-row>
-      <v-col cols="12" class="text-center mb-8">
-        <h1 class="text-h3 mb-4">Блог и новости</h1>
-        <p class="text-h6 text-grey">Актуальные новости и статьи о системе ТГИД-07</p>
-      </v-col>
-    </v-row>
+  <CmsPageRenderer slug="blog">
+    <div class="page">
+    <section class="page-hero">
+      <div class="container">
+        <UBadge color="primary" variant="subtle" size="lg">Блог</UBadge>
+        <h1 class="display-title">Заметки о цифровизации тепловых сетей</h1>
+        <p class="lead">Материалы о моделировании, ГИС-паспортизации, эксплуатации и внедрении инженерных web-систем.</p>
+      </div>
+    </section>
 
-    <v-row>
-      <v-col
-        cols="12"
-        md="4"
-        v-for="(post, index) in posts"
-        :key="index"
-      >
-        <v-card elevation="2" height="100%">
-          <v-img
-            :src="post.image"
-            height="200"
-            cover
-          />
-          <v-card-title>{{ post.title }}</v-card-title>
-          <v-card-subtitle>{{ post.date }}</v-card-subtitle>
-          <v-card-text>
-            <p>{{ post.excerpt }}</p>
-          </v-card-text>
-          <v-card-actions>
-            <v-btn color="primary" variant="text">Читать далее</v-btn>
-          </v-card-actions>
-        </v-card>
-      </v-col>
-    </v-row>
-  </v-container>
+    <section class="section">
+      <div class="container grid grid-3">
+        <article v-for="post in posts" :key="post.title" class="card card-pad accent-card">
+          <span class="pill">{{ post.tag }}</span>
+          <h2>{{ post.title }}</h2>
+          <p>{{ post.text }}</p>
+          <NuxtLink class="read-link" to="/demo">
+            Обсудить внедрение
+            <UIcon name="i-lucide-arrow-right" />
+          </NuxtLink>
+        </article>
+      </div>
+    </section>
+    </div>
+  </CmsPageRenderer>
 </template>
 
 <script setup lang="ts">
 useSEO({
-  title: 'Блог - Сириус',
-  description: 'Новости и статьи о системе ТГИД-07 и автоматизации теплоснабжения'
+  title: 'Материалы о ТГИД-07 — ПКФ «Сириус»',
+  description: 'Материалы ПКФ «Сириус» о цифровизации, моделировании, ГИС-паспортизации и эксплуатации тепловых сетей.'
 })
-useStructuredData()
 
 const posts = [
-  {
-    title: 'Новые возможности ТГИД-07',
-    date: '15 января 2024',
-    excerpt: 'Рассказываем о последних обновлениях системы и новых функциях',
-    image: '/main-func.png'
-  },
-  {
-    title: 'Внедрение системы на объекте',
-    date: '10 января 2024',
-    excerpt: 'Кейс успешного внедрения ТГИД-07 на крупном теплоснабжающем предприятии',
-    image: '/main-func.png'
-  },
-  {
-    title: 'Оптимизация режимов работы',
-    date: '5 января 2024',
-    excerpt: 'Как система ТГИД-07 помогает оптимизировать режимы работы тепловых сетей',
-    image: '/main-func.png'
-  }
+  { tag: 'Моделирование', title: 'Почему расчетная модель должна жить рядом с эксплуатацией', text: 'Когда модель отделена от реальных данных, решения быстро устаревают. ТГИД-07 связывает расчеты с картой, паспортами и текущими событиями.' },
+  { tag: 'ГИС', title: 'Паспортизация без хаоса в таблицах', text: 'Единый объект на карте становится точкой доступа к параметрам, документам и событиям.' },
+  { tag: 'Администрирование', title: 'Как не терять обращения после запуска сайта', text: 'Админ-панель закрывает базовый контур: контент, SEO, пользователи, заявки на демо и обращения.' }
 ]
 </script>
 
+<style scoped>
+.page-hero {
+  padding: 124px 0 56px;
+}
+
+article h2 {
+  margin: 18px 0 10px;
+  font-size: 1.35rem;
+  font-weight: 920;
+}
+
+article p {
+  color: var(--muted);
+  line-height: 1.7;
+}
+
+.read-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 14px;
+  color: var(--sirius-red-dark);
+  font-weight: 900;
+}
+</style>

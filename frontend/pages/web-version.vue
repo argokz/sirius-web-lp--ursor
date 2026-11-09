@@ -1,167 +1,91 @@
 <template>
-  <div class="web-version-page">
-    <!-- Hero Section -->
-    <section class="hero-section glass-effect">
-      <v-container>
-        <v-row align="center">
-          <v-col cols="12" md="6">
-            <div class="badge fade-in-up">Раздел 5. Web-версия</div>
-            <h1 class="display-1 fade-in-up delay-1">Мобильность и доступность данных</h1>
-            <p class="subtitle fade-in-up delay-2">
-              Обеспечьте доступ к актуальной схеме теплоснабжения для руководства 
-              и выездных бригад без установки сложного ПО.
+  <CmsPageRenderer slug="web-version">
+    <PageShell
+    eyebrow="Web-версия"
+    title="Доступ к актуальной схеме теплоснабжения из браузера"
+    description="Руководители, мастера участков и выездные бригады получают карту, параметры объектов, поиск, режимы и отчеты без тяжелых локальных установок."
+    image="/web_access.webp"
+    section-eyebrow="Доступ"
+    section-title="Быстро, безопасно, адаптивно"
+    :items="items"
+    cta-title="Запросите web-демо"
+    cta-text="Покажем работу с картой, поиском, карточками объектов, режимами и правами доступа на desktop и мобильном экране."
+  >
+    <section class="section-tight">
+      <div class="container">
+        <div class="content-band split-panel">
+          <div>
+            <span class="eyebrow">Работа в поле</span>
+            <h2 class="section-title">Инженер получает данные там, где находится объект</h2>
+            <p class="lead">
+              Web-версия открывается в Chrome, Safari и других современных браузерах на ПК, планшете или смартфоне. Сотруднику не нужно искать бумажный паспорт или звонить диспетчеру, чтобы уточнить параметры камеры или потребителя.
             </p>
-          </v-col>
-          <v-col cols="12" md="6" class="scroll-reveal-right">
-            <div class="device-mockup">
-               <div class="smartphone">
-                  <div class="screen">
-                    <v-icon icon="mdi-web" size="48" color="primary" />
-                  </div>
-               </div>
-            </div>
-          </v-col>
-        </v-row>
-      </v-container>
+          </div>
+          <div class="module-list">
+            <article v-for="workflow in workflows" :key="workflow.title" class="module-row">
+              <div class="icon-box">
+                <UIcon :name="workflow.icon" />
+              </div>
+              <div>
+                <h3>{{ workflow.title }}</h3>
+                <p>{{ workflow.text }}</p>
+              </div>
+            </article>
+          </div>
+        </div>
+      </div>
     </section>
 
-    <!-- Capabilities -->
-    <section class="capabilities py-16">
-      <v-container>
-        <v-row>
-          <v-col v-for="(cap, index) in capabilities" :key="index" cols="12" md="4" class="scroll-reveal">
-            <v-hover v-slot="{ isHovering, props }">
-              <v-card
-                v-bind="props"
-                :elevation="isHovering ? 12 : 2"
-                class="cap-card pa-6"
-                rounded="xl"
-              >
-                <v-icon :icon="cap.icon" size="40" color="primary" class="mb-4" />
-                <h3 class="mb-2">{{ cap.title }}</h3>
-                <p>{{ cap.description }}</p>
-              </v-card>
-            </v-hover>
-          </v-col>
-        </v-row>
-      </v-container>
+    <section class="section">
+      <div class="container">
+        <span class="eyebrow">Контроль доступа</span>
+        <h2 class="section-title">Данные открываются по ролям, а не всем подряд</h2>
+        <div class="detail-grid">
+          <article v-for="security in securityBlocks" :key="security.title" class="detail-card">
+            <h3>{{ security.title }}</h3>
+            <p>{{ security.text }}</p>
+          </article>
+        </div>
+      </div>
     </section>
-
-    <!-- Security & Access -->
-    <section class="security py-16 bg-light">
-      <v-container>
-        <v-row align="center">
-          <v-col cols="12" md="6" class="scroll-reveal-left">
-            <h2 class="section-title">Безопасность и контроль</h2>
-            <p>Разграничение прав доступа (только чтение или запись) и защита данных через SSL-шифрование корпоративного уровня.</p>
-            <v-alert
-              type="info"
-              variant="tonal"
-              title="Доступность"
-              text="Работает в Chrome, Safari и любом другом браузере на ПК, планшете или смартфоне."
-              class="mt-6"
-            />
-          </v-col>
-          <v-col cols="12" md="6" class="scroll-reveal-right">
-             <div class="security-visual">
-                <v-icon icon="mdi-shield-lock-outline" size="150" color="primary" class="blur-effect" />
-             </div>
-          </v-col>
-        </v-row>
-      </v-container>
-    </section>
-
-    <!-- CTA -->
-    <section class="cta-section py-16 text-center">
-      <v-container>
-        <v-btn size="x-large" color="primary" block sm="auto" rounded="pill" to="/demo">
-          Запросить демо-доступ
-          <v-icon end icon="mdi-account-key" />
-        </v-btn>
-      </v-container>
-    </section>
-  </div>
+    </PageShell>
+    <template #append>
+      <ProductCapabilities
+        :sections="['10-ai', '08-admin', '09-field-public']"
+        eyebrow="Возможности web-версии"
+        title="ИИ, интеграции и доступ из браузера"
+        description="Помощник ИИ, права и аудит, вебхуки и встраиваемые карты, полевое приложение — всё в браузере без установки."
+      />
+    </template>
+  </CmsPageRenderer>
 </template>
 
 <script setup lang="ts">
-const capabilities = [
-  { title: 'Работа в браузере', description: 'Никаких установок. Мгновенный запуск на любом устройстве.', icon: 'mdi-monitor-cellphone' },
-  { title: 'Поиск "в поле"', description: 'Быстрый поиск абонентов и камер прямо на объекте.', icon: 'mdi-map-marker-distance' },
-  { title: 'Живые данные', description: 'Просмотр пьезометрических графиков и режимов удаленно.', icon: 'mdi-broadcast' }
+useSEO({
+  title: 'Web-версия ТГИД-07',
+  description: 'Web-интерфейс ТГИД-07 для карты теплосети, поиска объектов, просмотра режимов и безопасного доступа из браузера от ПКФ «Сириус».'
+})
+
+const items = [
+  { icon: 'i-lucide-laptop', title: 'Работа из браузера', text: 'Доступ через Chrome, Safari и другие браузеры без установки тяжелого рабочего места.' },
+  { icon: 'i-lucide-tablet-smartphone', title: 'Адаптивность', text: 'Интерфейс сохраняет читаемость и рабочие сценарии на desktop, планшете и мобильном экране.' },
+  { icon: 'i-lucide-map-pinned', title: 'Карта и карточки', text: 'Параметры узла, трубы, камеры или потребителя открываются кликом по карте.' },
+  { icon: 'i-lucide-search', title: 'Поиск в поле', text: 'Быстрый поиск абонентов, тепловых камер, адресов и объектов сети во время выезда.' },
+  { icon: 'i-lucide-chart-line', title: 'Режимы удаленно', text: 'Просмотр пьезометрических графиков, текущих режимов и расчетных результатов без доступа к desktop-клиенту.' },
+  { icon: 'i-lucide-lock-keyhole', title: 'Права и SSL', text: 'Разграничение чтения и записи, защищенный обмен данными и администрирование пользователей.' }
 ]
 
-const { observeElements } = useScrollAnimation()
+const workflows = [
+  { icon: 'i-lucide-navigation', title: 'Найти объект', text: 'По адресу, инвентарному номеру, названию камеры, абоненту или участку сети.' },
+  { icon: 'i-lucide-mouse-pointer-click', title: 'Открыть параметры', text: 'Получить характеристики трубы, камеры, потребителя, оборудования и связанные документы.' },
+  { icon: 'i-lucide-chart-spline', title: 'Проверить режим', text: 'Посмотреть расчетные параметры и пьезометрические графики перед принятием решения.' },
+  { icon: 'i-lucide-send', title: 'Передать действие', text: 'Сформировать обращение, уточнение или задачу для эксплуатационной команды.' }
+]
 
-onMounted(() => {
-  observeElements()
-})
-
-useSEO({
-  title: 'Web-версия ТГИД-07: Доступ к сети из любой точки мира',
-  description: 'Мобильность для выездных бригад и прозрачность для руководства. Работайте с актуальной схемой теплоснабжения в браузере на любом устройстве.'
-})
+const securityBlocks = [
+  { title: 'Роли пользователей', text: 'Руководитель, диспетчер, инженер, мастер участка и подрядчик могут видеть разные наборы данных.' },
+  { title: 'Чтение и запись', text: 'Для полевых сотрудников можно оставить просмотр, а внесение изменений разрешить только ответственным ролям.' },
+  { title: 'Защищенное подключение', text: 'SSL-шифрование и серверная авторизация снижают риск доступа к производственным данным вне контура предприятия.' },
+  { title: 'Администрирование сайта', text: 'Пользователи, заявки, контент и SEO управляются из отдельной административной зоны.' }
+]
 </script>
-
-<style scoped>
-.web-version-page { background: #ffffff; }
-
-.hero-section {
-  padding: 100px 0;
-  background: radial-gradient(circle at 70% 30%, rgba(56, 189, 248, 0.05), transparent);
-}
-
-.badge {
-  display: inline-block;
-  padding: 6px 16px;
-  background: rgba(14, 165, 233, 0.1);
-  color: #0ea5e9;
-  border-radius: 20px;
-  font-weight: 600;
-  margin-bottom: 24px;
-}
-
-.display-1 { font-size: 3rem; font-weight: 800; margin-bottom: 24px; }
-
-.device-mockup {
-  display: flex;
-  justify-content: center;
-  perspective: 1000px;
-}
-
-.smartphone {
-  width: 200px;
-  height: 400px;
-  background: #1e293b;
-  border-radius: 36px;
-  padding: 12px;
-  box-shadow: 0 50px 100px rgba(0,0,0,0.1);
-  transform: rotateY(-20deg) rotateX(10deg);
-}
-
-.screen {
-  width: 100%;
-  height: 100%;
-  background: #ffffff;
-  border-radius: 24px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.cap-card {
-  height: 100%;
-  transition: all 0.3s ease;
-  border: 1px solid #f1f5f9;
-}
-
-.bg-light { background: #f8fafc; }
-
-.blur-effect {
-  filter: drop-shadow(0 0 20px rgba(14, 165, 233, 0.2));
-}
-
-@media (max-width: 600px) {
-  .display-1 { font-size: 2rem; }
-  .smartphone { transform: none; width: 160px; height: 320px; }
-}
-</style>

@@ -1,96 +1,85 @@
 <template>
-  <v-container class="fill-height" fluid>
-    <v-row align="center" justify="center">
-      <v-col cols="12" sm="8" md="4">
-        <v-card elevation="2">
-          <v-card-title class="text-h5 text-center pa-6">
-            Вход в систему
-          </v-card-title>
-          <v-card-text>
-            <v-form ref="form" v-model="valid">
-              <v-text-field
-                v-model="email"
-                label="Email"
-                type="email"
-                :rules="[rules.required, rules.email]"
-                required
-                prepend-inner-icon="mdi-email"
-              />
-              <v-text-field
-                v-model="password"
-                label="Пароль"
-                type="password"
-                :rules="[rules.required]"
-                required
-                prepend-inner-icon="mdi-lock"
-              />
-              <v-alert
-                v-if="error"
-                type="error"
-                class="mt-4"
-              >
-                {{ error }}
-              </v-alert>
-              <v-btn
-                color="primary"
-                size="large"
-                variant="elevated"
-                block
-                @click="handleLogin"
-                :disabled="!valid || loading"
-                :loading="loading"
-                class="mt-4"
-              >
-                Войти
-              </v-btn>
-            </v-form>
-          </v-card-text>
-        </v-card>
-      </v-col>
-    </v-row>
-  </v-container>
+  <div class="login-page">
+    <form class="login-card card card-pad" @submit.prevent="handleLogin">
+      <SiriusLogo :width="171" />
+      <div>
+        <h1>Вход в CRM</h1>
+        <p>Панель управления контентом, заявками, SEO и пользователями.</p>
+      </div>
+      <label class="field-label">Email</label>
+      <input v-model="email" class="field" type="email" required autocomplete="email">
+      <label class="field-label">Пароль</label>
+      <input v-model="password" class="field" type="password" required autocomplete="current-password">
+      <button class="btn-link btn-primary" type="submit" :disabled="loading">
+        {{ loading ? 'Входим...' : 'Войти' }}
+      </button>
+      <p v-if="error" class="form-error">{{ error }}</p>
+    </form>
+  </div>
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue'
-
 definePageMeta({
   layout: false
 })
 
 useHead({
-  title: 'Вход - Сириус',
+  title: 'Вход в CRM - Sirius'
 })
 
-const { login } = useAuth()
-
-const valid = ref(false)
-const loading = ref(false)
-const error = ref('')
+const { login, isAuthenticated } = useAuth()
 const email = ref('')
 const password = ref('')
+const loading = ref(false)
+const error = ref('')
 
-const rules = {
-  required: (value: string) => !!value || 'Обязательное поле',
-  email: (value: string) => {
-    const pattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
-    return pattern.test(value) || 'Некорректный email'
-  }
-}
+onMounted(() => {
+  if (isAuthenticated.value) navigateTo('/admin')
+})
 
 const handleLogin = async () => {
   loading.value = true
   error.value = ''
-
   const result = await login(email.value, password.value)
-  
+  loading.value = false
   if (result.success) {
     navigateTo('/admin')
   } else {
-    error.value = result.error || 'Ошибка входа'
+    error.value = result.error || 'Не удалось войти'
   }
-  
-  loading.value = false
 }
 </script>
 
+<style scoped>
+.login-page {
+  min-height: 100vh;
+  display: grid;
+  place-items: center;
+  padding: 24px;
+  background:
+    radial-gradient(circle at 24% 20%, rgba(227, 6, 19, 0.16), transparent 28rem),
+    #f8fafc;
+}
+
+.login-card {
+  width: min(100%, 440px);
+  display: grid;
+  gap: 12px;
+}
+
+h1 {
+  margin: 16px 0 6px;
+  font-size: 2rem;
+  font-weight: 930;
+}
+
+p {
+  margin: 0;
+  color: var(--muted);
+}
+
+.form-error {
+  color: #991b1b;
+  font-weight: 800;
+}
+</style>

@@ -1,42 +1,41 @@
 <template>
-  <v-img
-    :src="src"
-    :alt="alt"
-    :lazy-src="lazySrc"
-    :loading="loading"
-    v-bind="$attrs"
-    @load="onLoad"
-  >
-    <template v-slot:placeholder>
-      <v-row class="fill-height ma-0" align="center" justify="center">
-        <v-progress-circular indeterminate color="primary" />
-      </v-row>
-    </template>
-  </v-img>
+  <figure class="sirius-image" :style="{ aspectRatio }">
+    <img
+      :src="src"
+      :alt="alt"
+      :loading="eager ? 'eager' : 'lazy'"
+      :fetchpriority="eager ? 'high' : undefined"
+      decoding="async"
+    >
+  </figure>
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue'
-
-const props = defineProps({
-  src: {
-    type: String,
-    required: true
-  },
-  alt: {
-    type: String,
-    default: ''
-  },
-  lazySrc: {
-    type: String,
-    default: '/logo.png'
-  }
+withDefaults(defineProps<{
+  src: string
+  alt?: string
+  aspectRatio?: string
+  /** Картинка первого экрана: грузить сразу и с высоким приоритетом. */
+  eager?: boolean
+}>(), {
+  alt: '',
+  aspectRatio: '16 / 10',
+  eager: false
 })
-
-const loading = ref(true)
-
-const onLoad = () => {
-  loading.value = false
-}
 </script>
 
+<style scoped>
+.sirius-image {
+  margin: 0;
+  overflow: hidden;
+  border-radius: 8px;
+  background: #f1f5f9;
+}
+
+.sirius-image img {
+  width: 100%;
+  height: 100%;
+  display: block;
+  object-fit: cover;
+}
+</style>

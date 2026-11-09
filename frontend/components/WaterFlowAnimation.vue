@@ -17,9 +17,9 @@
 
         <!-- Water Particle Gradients -->
         <linearGradient :id="`water-grad-${id}`">
-          <stop offset="0%" style="stop-color:rgba(59, 130, 246, 0)" />
-          <stop offset="50%" style="stop-color:rgba(96, 165, 250, 0.8)" />
-          <stop offset="100%" style="stop-color:rgba(59, 130, 246, 0)" />
+          <stop offset="0%" style="stop-color:rgba(227, 6, 19, 0)" />
+          <stop offset="50%" style="stop-color:rgba(248, 113, 113, 0.85)" />
+          <stop offset="100%" style="stop-color:rgba(227, 6, 19, 0)" />
         </linearGradient>
 
         <!-- Glow Filter -->
@@ -92,7 +92,8 @@ const props = defineProps<{
   showBadge?: boolean
 }>()
 
-const instanceId = Math.random().toString(36).substring(7)
+// useId одинаков на сервере и в браузере — ссылки url(#…) не расходятся при гидрации.
+const instanceId = useId().replace(/[^a-zA-Z0-9_-]/g, '')
 const id = computed(() => `flow-${instanceId}`)
 const strokeWidth = computed(() => props.mode === 'vertical' ? 40 : 30)
 
@@ -143,7 +144,7 @@ const gauges = computed(() => {
 
 .water-stream {
   fill: none;
-  stroke: #3b82f6;
+  stroke: #e30613;
   stroke-linecap: round;
 }
 
@@ -155,7 +156,7 @@ const gauges = computed(() => {
 }
 
 .fast-particles {
-  stroke: #60a5fa;
+  stroke: #fb7185;
   stroke-width: 4;
   opacity: 0.6;
   stroke-dasharray: 10, 100;
@@ -163,7 +164,7 @@ const gauges = computed(() => {
 }
 
 .glowing-stream {
-  stroke: #93c5fd;
+  stroke: #fecdd3;
   stroke-width: 2;
   opacity: 0.8;
   stroke-dasharray: 40, 300;
@@ -203,9 +204,9 @@ const gauges = computed(() => {
 .pulse-icon {
   width: 8px;
   height: 8px;
-  background: #3b82f6;
+  background: #e30613;
   border-radius: 50%;
-  box-shadow: 0 0 10px #3b82f6;
+  box-shadow: 0 0 10px #e30613;
   animation: pulse 2s infinite;
 }
 
@@ -225,6 +226,16 @@ const gauges = computed(() => {
 .mode-vertical .manometer {
   /* Scale down manometers slightly for vertical pipes */
   transform: scale(0.8);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .base-stream,
+  .fast-particles,
+  .glowing-stream,
+  .needle-anim,
+  .pulse-icon {
+    animation: none !important;
+  }
 }
 </style>
 

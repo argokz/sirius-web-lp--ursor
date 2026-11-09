@@ -1,149 +1,87 @@
 <template>
-  <div class="maintenance-page">
-    <!-- Hero Section -->
-    <section class="hero-section glass-effect">
-      <v-container>
-        <v-row align="center" justify="center" class="text-center">
-          <v-col cols="12" md="10">
-            <div class="badge fade-in-up">Раздел 4. Эксплуатация и Ремонты</div>
-            <h1 class="display-1 fade-in-up delay-1">Управление надежностью: Ремонты и Дефекты</h1>
-            <p class="subtitle fade-in-up delay-2">
-              Автоматизированное рабочее место (АРМ) для служб эксплуатации: 
-              мониторинг всей истории жизни теплосети и планирование работ.
+  <CmsPageRenderer slug="maintenance">
+    <PageShell
+    eyebrow="Эксплуатация и ремонты"
+    title="Управление надежностью: ремонты, опрессовка, дефекты"
+    description="АРМ эксплуатационных служб ведет полную историю жизни теплосети, помогает планировать работы, контролировать сроки и видеть аварийность по конкретным участкам."
+    image="/maintenance_tablet.webp"
+    section-eyebrow="Обслуживание"
+    section-title="Цикл работ под контролем"
+    :items="items"
+    cta-title="Покажем эксплуатационный контур"
+    cta-text="Соберем демонстрацию по дефектам, опрессовкам, ремонтным контурам, коррозии и отчетности для руководства."
+  >
+    <section class="section-tight">
+      <div class="container">
+        <div class="content-band split-panel">
+          <div>
+            <span class="eyebrow">От журнала к аналитике</span>
+            <h2 class="section-title">Каждый дефект получает место, причину и историю устранения</h2>
+            <p class="lead">
+              Система фиксирует порывы, свищи, неисправности арматуры и повреждения, найденные в эксплуатации, обходах, шурфовках или опрессовках. Эти данные превращаются в карту риска, а не остаются строками в разрозненных таблицах.
             </p>
-          </v-col>
-        </v-row>
-      </v-container>
+          </div>
+          <div class="detail-grid">
+            <article v-for="source in defectSources" :key="source.title" class="detail-card">
+              <h3>{{ source.title }}</h3>
+              <p>{{ source.text }}</p>
+            </article>
+          </div>
+        </div>
+      </div>
     </section>
 
-    <!-- Modules Timeline -->
-    <section class="modules-timeline py-16">
-      <v-container>
-        <v-row>
-          <v-col v-for="(module, index) in modules" :key="index" cols="12" md="6" lg="3" class="scroll-reveal">
-            <v-card class="module-card elevation-0">
-              <div class="module-number">{{ index + 1 }}</div>
-              <h3>{{ module.title }}</h3>
-              <p>{{ module.description }}</p>
-            </v-card>
-          </v-col>
-        </v-row>
-      </v-container>
+    <section class="section">
+      <div class="container">
+        <span class="eyebrow">Жизненный цикл работ</span>
+        <h2 class="section-title">От выявления до закрытия и анализа ресурса</h2>
+        <div class="process-flow">
+          <article v-for="(step, index) in workFlow" :key="step.title" class="process-step">
+            <span>{{ index + 1 }}</span>
+            <h3>{{ step.title }}</h3>
+            <p>{{ step.text }}</p>
+          </article>
+        </div>
+      </div>
     </section>
-
-    <!-- Specific Highlights -->
-    <section class="highlights py-16 bg-dark text-white">
-      <v-container>
-        <v-row align="center">
-          <v-col cols="12" md="6" class="scroll-reveal-left">
-            <h2 class="section-title text-white">Мониторинг коррозии</h2>
-            <p class="opacity-80">Уникальный модуль для анализа скорости внутренней коррозии. Оценка агрессивности сетевой воды и прогноз ресурса труб для предотвращения аварий.</p>
-            <div class="stats-box mt-8">
-              <div class="stat-item">
-                <span class="stat-val">15-20%</span>
-                <span class="stat-label">Снижение аварийности</span>
-              </div>
-            </div>
-          </v-col>
-          <v-col cols="12" md="6" class="scroll-reveal-right">
-             <div class="image-showcase premium-border apple-shadow rounded-xl overflow-hidden">
-                <v-img src="/maintenance_tablet.png" alt="Планшет мастера с дефектами" cover class="rounded-xl transition-transform glow-hover" />
-             </div>
-          </v-col>
-        </v-row>
-      </v-container>
-    </section>
-
-    <!-- Download CTA -->
-    <section class="download-section py-16 text-center">
-      <v-container>
-        <v-btn size="x-large" color="secondary" dark rounded="pill" class="cta-btn shadow-premium" to="/demo">
-          Скачать презентацию модуля Ремонты
-          <v-icon end icon="mdi-download" />
-        </v-btn>
-      </v-container>
-    </section>
-  </div>
+    </PageShell>
+    <template #append>
+      <ProductCapabilities
+        :sections="['03-operations', '04-equipment', '09-field-public']"
+        eyebrow="Функции эксплуатации"
+        title="Аварии, наряды, журналы и бригады в поле"
+        description="От локализации аварии до закрытого наряда: журналы эксплуатации, оборудование сети и приложение бригады."
+      />
+    </template>
+  </CmsPageRenderer>
 </template>
 
 <script setup lang="ts">
-const modules = [
-  { title: 'Учет нарушений', description: 'Фиксация порывов, свищей и дефектов на интерактивной карте с классификацией.' },
-  { title: 'Опрессовка', description: 'Планирование кампаний испытаний и создание фиксация повреждений в реальном времени.' },
-  { title: 'Планирование ТОиР', description: 'Управление капитальными и текущими ремонтами на основе данных диагностики.' },
-  { title: 'Индикаторы', description: 'Учет установки индикаторов коррозии и анализ наработки на отказ.' }
+useSEO({
+  title: 'Эксплуатация и ремонты — ТГИД-07',
+  description: 'Дефекты, опрессовки, шурфовки, коррозия, ТОиР и аналитика аварийности тепловых сетей в ТГИД-07 от ПКФ «Сириус».'
+})
+
+const items = [
+  { icon: 'i-lucide-clipboard-list', title: 'План работ', text: 'Сезонные задачи, сроки, ответственные, статусы и контроль выполнения ремонтной программы.' },
+  { icon: 'i-lucide-triangle-alert', title: 'Нарушения и дефекты', text: 'Порывы, свищи, неисправности арматуры и другие события фиксируются на карте с классификацией причин.' },
+  { icon: 'i-lucide-gauge', title: 'Гидравлические испытания', text: 'Создание контуров опрессовки на схеме, фиксация повреждений и формирование актов и графиков.' },
+  { icon: 'i-lucide-hammer', title: 'ТОиР', text: 'Капитальные, текущие и инвестиционные ремонты со статусами “План”, “В работе”, “Завершено”.' },
+  { icon: 'i-lucide-flask-conical', title: 'Коррозионный мониторинг', text: 'Индикаторы коррозии, потеря массы образцов, агрессивность сетевой воды и оценка остаточного ресурса.' },
+  { icon: 'i-lucide-chart-no-axes-combined', title: 'Аналитика аварийности', text: 'Статистика повреждаемости, зоны риска, наработка на отказ и приоритеты замены труб до прорыва.' }
 ]
 
-const { observeElements } = useScrollAnimation()
+const defectSources = [
+  { title: 'Эксплуатация', text: 'Инциденты и нарушения заносятся сразу с привязкой к объекту, участку, дате, источнику и ответственным.' },
+  { title: 'Обходы и осмотры', text: 'Полевые замечания не теряются, а попадают в журнал дефектов и становятся частью истории объекта.' },
+  { title: 'Опрессовка', text: 'Контуры испытаний создаются на схеме, а найденные повреждения фиксируются в реальном времени.' },
+  { title: 'Шурфовки и коррозия', text: 'Результаты обследований и индикаторов помогают прогнозировать износ и планировать замену участков.' }
+]
 
-onMounted(() => {
-  observeElements()
-})
-
-useSEO({
-  title: 'Управление эксплуатацией и ремонтами (ТОиР) ТГИД-07',
-  description: 'АРМ службы эксплуатации: учет повреждений, планирование ремонтов, мониторинг коррозии и опрессовка. Продлите срок службы вашей сети с ТГИД-07.'
-})
+const workFlow = [
+  { title: 'Выявить', text: 'Дефект, повреждение или риск создается на карте и связывается с конкретным объектом сети.' },
+  { title: 'Запланировать', text: 'Формируется ремонтный контур, сроки, ресурсы, ответственные и приоритет выполнения.' },
+  { title: 'Исполнить', text: 'Статусы работ обновляются по ходу выполнения, а документы и акты прикладываются к событию.' },
+  { title: 'Проанализировать', text: 'История повреждений показывает повторяемость проблем и помогает корректировать инвестиционную программу.' }
+]
 </script>
-
-<style scoped>
-.maintenance-page { background: #ffffff; }
-
-.hero-section {
-  padding: 100px 0;
-  background: radial-gradient(circle at left bottom, rgba(239, 68, 68, 0.05), transparent);
-}
-
-.badge {
-  display: inline-block;
-  padding: 6px 16px;
-  background: rgba(239, 68, 68, 0.1);
-  color: #ef4444;
-  border-radius: 20px;
-  font-weight: 600;
-  font-size: 0.9rem;
-  margin-bottom: 24px;
-}
-
-.display-1 {
-  font-size: 3rem;
-  font-weight: 800;
-  color: #1a1a1a;
-  margin-bottom: 24px;
-}
-
-.module-card {
-  padding: 30px;
-  border-radius: 24px;
-  background: #fdf2f2;
-  height: 100%;
-  position: relative;
-  overflow: hidden;
-}
-
-.module-number {
-  font-size: 5rem;
-  font-weight: 900;
-  position: absolute;
-  right: -10px;
-  top: -20px;
-  color: rgba(239, 68, 68, 0.05);
-}
-
-.bg-dark { background: #0f172a; }
-
-.stat-val {
-  display: block;
-  font-size: 3rem;
-  font-weight: 800;
-  color: #ef4444;
-}
-
-.cta-btn {
-  box-shadow: 0 10px 20px rgba(239, 68, 68, 0.2);
-}
-
-@media (max-width: 960px) {
-  .display-1 { font-size: 2rem; }
-}
-</style>

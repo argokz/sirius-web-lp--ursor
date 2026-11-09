@@ -9,21 +9,22 @@
         "generate": "nuxt generate",
         "preview": "nuxt preview --port 3006",
         "postinstall": "nuxt prepare",
-        "start": "node .output/server/index.mjs"
+        "start": "node .output/server/index.mjs",
+        "manual:sync": "node scripts/sync-manual.mjs"
     },
     "dependencies": {
-        "@mdi/font": "^7.4.47",
         "@nuxt/image": "^2.0.0",
+        "@nuxt/ui": "^4.9.0",
         "@nuxtjs/sitemap": "^7.6.0",
-        "@nuxtjs/vuetify": "^1.0.0",
         "@pinia/nuxt": "^0.5.5",
-        "nuxt": "^3.11.0",
+        "nuxt": "^4.4.8",
         "pinia": "^2.3.1",
-        "vuetify": "^3.5.0"
+        "tailwindcss": "^4.3.1"
     },
     "devDependencies": {
         "@nuxt/devtools": "latest",
-        "@types/node": "^20.10.0",
-        "typescript": "^5.3.3"
+        "@types/node": "^26.0.0",
+        "marked": "^17.0.6",
+        "typescript": "^5.9.3"
     }
 }

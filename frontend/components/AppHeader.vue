@@ -1,272 +1,317 @@
 <template>
-  <v-app-bar 
-    :class="{'header-scrolled': isScrolled}"
-    elevation="0" 
-    app
-    height="80"
-  >
-    <v-container class="d-flex align-center">
-      <div class="header-container-pipe">
-        <v-btn
-          v-if="$vuetify.display.smAndDown"
-          icon="mdi-menu"
-          variant="text"
-          @click="drawer = !drawer"
-          color="white"
-          class="mr-2"
-        />
-        
-        <NuxtLink to="/" class="brand-link d-flex align-center text-decoration-none">
-          <div class="logo-wrapper mr-3">
-            <SiriusLogo size="32" />
-          </div>
-          <div class="brand-text">
-            <span class="brand-name">СИРИУС</span>
-          </div>
-        </NuxtLink>
+  <header class="site-header" :class="{ 'site-header-scrolled': isScrolled }">
+    <div class="container header-inner">
+      <NuxtLink to="/" class="brand" aria-label="Sirius">
+        <SiriusLogo :width="146" />
+      </NuxtLink>
 
-        <!-- Small Industrial Manometer -->
-        <div class="header-manometer ml-4 d-none d-md-flex">
-           <svg width="24" height="24" viewBox="0 0 24 24">
-             <circle cx="12" cy="12" r="10" fill="#1e293b" stroke="#64748b" stroke-width="1.5" />
-             <circle cx="12" cy="12" r="8" fill="#f8fafc" />
-             <g class="needle-anim">
-               <line x1="12" y1="12" x2="12" y2="6" stroke="#ef4444" stroke-width="1.5" stroke-linecap="round" />
-               <circle cx="12" cy="12" r="1.5" fill="#ef4444" />
-             </g>
-           </svg>
-        </div>
-        
-        <v-spacer />
-        
-        <div v-if="$vuetify.display.mdAndUp" class="nav-links d-flex align-center">
-          <NuxtLink
-            v-for="item in menuItems"
-            :key="item.to"
-            :to="item.to"
-            class="nav-item text-decoration-none"
-            active-class="nav-item-active"
-          >
+      <nav class="desktop-nav" aria-label="Основная навигация">
+        <template v-for="item in navItems" :key="item.to">
+          <a v-if="item.isExternal" :href="item.to" target="_blank" rel="noopener noreferrer">
+            {{ item.title }}
+          </a>
+          <NuxtLink v-else :to="item.to">
             {{ item.title }}
           </NuxtLink>
-          
-          <v-btn
-            to="/demo"
-            color="primary"
-            variant="elevated"
-            class="ml-6 action-btn shadow-premium"
-            rounded="pill"
-            size="small"
-          >
-            Демо
-          </v-btn>
-        </div>
-      </div>
-    </v-container>
-  </v-app-bar>
+        </template>
+      </nav>
 
-  <v-navigation-drawer
-    v-model="drawer"
-    temporary
-    location="left"
-    class="mobile-drawer"
-    overlay-opacity="0.5"
-  >
-    <v-list class="pa-4">
-      <div class="text-center mb-8 pt-4">
-          <SiriusLogo size="60" class="mx-auto mb-2" />
-          <h2 class="primary-gradient-text">СИРИУС</h2>
+      <div class="header-actions">
+        <UButton to="/contacts" variant="ghost" color="neutral" class="desktop-action">
+          Контакты
+        </UButton>
+        <UButton to="/demo" color="primary" trailing-icon="i-lucide-arrow-right">
+          Демо
+        </UButton>
+        <button class="menu-btn" type="button" aria-label="Открыть меню" @click="menuOpen = true">
+          <UIcon name="i-lucide-menu" />
+        </button>
       </div>
-      <v-list-item
-        v-for="item in menuItems"
-        :key="item.to"
-        :to="item.to"
-        @click="drawer = false"
-        rounded="lg"
-        class="mb-2"
-        color="primary"
-      >
-        <v-list-item-title class="font-weight-bold">{{ item.title }}</v-list-item-title>
-      </v-list-item>
-      <v-divider class="my-4" />
-      <v-btn
-        block
-        to="/demo"
-        color="primary"
-        size="x-large"
-        rounded="pill"
-        @click="drawer = false"
-      >
-        Заявка на демо
-      </v-btn>
-    </v-list>
-  </v-navigation-drawer>
+    </div>
+
+    <div v-if="menuOpen" class="mobile-menu" @click.self="menuOpen = false">
+      <aside class="mobile-panel">
+        <div class="mobile-head">
+          <SiriusLogo :width="132" />
+          <button class="menu-btn" type="button" aria-label="Закрыть меню" @click="menuOpen = false">
+            <UIcon name="i-lucide-x" />
+          </button>
+        </div>
+
+        <template v-for="item in navItems" :key="item.to">
+          <a
+            v-if="item.isExternal"
+            :href="item.to"
+            class="mobile-link"
+            target="_blank"
+            rel="noopener noreferrer"
+            @click="menuOpen = false"
+          >
+            <UIcon :name="item.icon" />
+            {{ item.title }}
+          </a>
+          <NuxtLink v-else :to="item.to" class="mobile-link" @click="menuOpen = false">
+            <UIcon :name="item.icon" />
+            {{ item.title }}
+          </NuxtLink>
+        </template>
+        <NuxtLink to="/contacts" class="mobile-link" @click="menuOpen = false">
+          <UIcon name="i-lucide-mail" />
+          Контакты
+        </NuxtLink>
+
+        <UButton to="/demo" color="primary" block size="lg" class="mt-4" @click="menuOpen = false">
+          Запросить демо
+        </UButton>
+      </aside>
+    </div>
+  </header>
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted, onUnmounted } from 'vue'
+import { computed, onMounted, onUnmounted, ref } from 'vue'
 
-const drawer = ref(false)
+interface RemoteNavItem {
+  title: string
+  url: string
+  icon?: string
+  is_external?: boolean
+}
+
+const config = useRuntimeConfig()
+const menuOpen = ref(false)
 const isScrolled = ref(false)
 
+const fallbackNavItems: RemoteNavItem[] = [
+  { title: 'Продукт', url: '/product', icon: 'i-lucide-box' },
+  { title: 'Возможности', url: '/features', icon: 'i-lucide-layout-grid' },
+  { title: 'Моделирование', url: '/modeling', icon: 'i-lucide-chart-no-axes-combined' },
+  { title: 'ГИС', url: '/gis', icon: 'i-lucide-map' },
+  { title: 'Эксплуатация', url: '/maintenance', icon: 'i-lucide-wrench' },
+  { title: 'Решения', url: '/solutions', icon: 'i-lucide-network' },
+  { title: 'Web', url: '/web-version', icon: 'i-lucide-globe' },
+  { title: 'Документация', url: '/docs', icon: 'i-lucide-book-open' }
+]
+
+const { data: remoteNavigation } = useAsyncData<RemoteNavItem[]>(
+  'site-navigation',
+  async () => {
+    try {
+      return await $fetch<RemoteNavItem[]>(`${config.public.apiBase}/api/navigation`, {
+        timeout: 900
+      })
+    } catch {
+      return []
+    }
+  },
+  {
+    // Меню приходит уже в HTML: без подмены пунктов после загрузки шапка не перестраивается на глазах.
+    default: () => []
+  }
+)
+
+const navItems = computed(() => {
+  const source = remoteNavigation.value?.length ? remoteNavigation.value : fallbackNavItems
+
+  return source.map((item) => ({
+    title: item.title,
+    to: item.url,
+    icon: item.icon || 'i-lucide-circle',
+    isExternal: Boolean(item.is_external || /^https?:\/\//.test(item.url))
+  }))
+})
+
 const handleScroll = () => {
-  isScrolled.value = window.scrollY > 50
+  isScrolled.value = window.scrollY > 12
 }
 
 onMounted(() => {
-  window.addEventListener('scroll', handleScroll)
+  handleScroll()
+  window.addEventListener('scroll', handleScroll, { passive: true })
 })
 
 onUnmounted(() => {
   window.removeEventListener('scroll', handleScroll)
 })
-
-const menuItems = [
-  { title: 'Главная', to: '/' },
-  { title: 'Моделирование', to: '/modeling' },
-  { title: 'ГИС', to: '/gis' },
-  { title: 'Ремонты', to: '/maintenance' },
-  { title: 'Web-версия', to: '/web-version' },
-  { title: 'Контакты', to: '/contacts' },
-]
 </script>
 
 <style scoped>
-.v-app-bar {
-  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1) !important;
-  background: transparent !important;
-  border-bottom: none !important;
-  overflow: visible !important;
+.site-header {
+  position: fixed;
+  inset: 0 0 auto;
+  z-index: 50;
+  border-bottom: 1px solid transparent;
+  background: rgba(246, 244, 238, 0);
+  transition: background-color 0.25s ease, border-color 0.25s ease;
 }
 
-:deep(.v-toolbar__content) {
-  overflow: visible !important;
-  padding: 0 16px !important;
+.site-header-scrolled {
+  background: rgba(246, 244, 238, 0.94);
+  border-color: var(--line);
+  backdrop-filter: blur(10px);
 }
 
-.header-container-pipe {
-  width: 100%;
-  height: 60px;
-  background: linear-gradient(180deg, 
-    #0f172a 0%, 
-    #334155 30%, 
-    #64748b 50%, 
-    #334155 70%, 
-    #0f172a 100%
-  );
-  border-radius: 100px;
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  position: relative;
+.header-inner {
+  height: 72px;
   display: flex;
   align-items: center;
-  padding: 0 30px;
-  box-shadow: 
-    0 10px 25px rgba(0,0,0,0.4),
-    inset 0 2px 4px rgba(255,255,255,0.1),
-    inset 0 -2px 4px rgba(0,0,0,0.4);
-  transition: all 0.4s ease;
+  gap: 28px;
 }
 
-.header-scrolled .header-container-pipe {
-  height: 52px;
-  margin-top: 4px;
-  background: linear-gradient(180deg, 
-    #1e293b 0%, 
-    #475569 30%, 
-    #94a3b8 50%, 
-    #475569 70%, 
-    #1e293b 100%
-  );
-  box-shadow: 0 5px 15px rgba(0,0,0,0.5);
+.brand {
+  display: inline-flex;
+  align-items: center;
+  flex: 0 0 auto;
 }
 
-/* Industrial Joint Accents */
-.header-container-pipe::before,
-.header-container-pipe::after {
-  content: '';
+.desktop-nav {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  flex: 1;
+  min-width: 0;
+}
+
+.desktop-nav a {
+  position: relative;
+  padding: 8px 9px;
+  white-space: nowrap;
+  color: var(--ink-2);
+  font-size: 0.92rem;
+  font-weight: 500;
+  transition: color 0.2s ease;
+}
+
+/* Черта под пунктом выезжает слева направо. */
+.desktop-nav a::after {
+  content: "";
   position: absolute;
-  top: 50%;
-  transform: translateY(-50%);
-  width: 12px;
-  height: calc(100% + 10px);
-  background: #1e293b;
-  border: 1px solid #475569;
-  border-radius: 4px;
-  z-index: -1;
+  right: 9px;
+  bottom: 2px;
+  left: 9px;
+  height: 1px;
+  background: var(--ink);
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform 0.25s ease;
 }
 
-.header-container-pipe::before { left: 40px; }
-.header-container-pipe::after { right: 40px; }
-
-.brand-link {
-    transition: all 0.3s ease;
-    z-index: 2;
+.desktop-nav a:hover {
+  color: var(--ink);
 }
 
-.brand-link:hover {
-    transform: scale(1.05) rotate(-1deg);
+.desktop-nav a:hover::after {
+  transform: scaleX(1);
 }
 
-.logo-wrapper {
-    filter: drop-shadow(0 0 10px rgba(59, 130, 246, 0.5));
+.desktop-nav a.router-link-active {
+  color: var(--ink);
 }
 
-.brand-name {
-    font-size: 1.4rem;
-    font-weight: 950;
-    letter-spacing: 2px;
-    color: white;
-    text-shadow: 0 2px 4px rgba(0,0,0,0.5);
+.desktop-nav a.router-link-active::after {
+  height: 2px;
+  background: var(--sirius-red);
+  transform: scaleX(1);
 }
 
-.nav-item {
-    font-weight: 700;
-    color: rgba(255, 255, 255, 0.8) !important;
-    font-size: 0.85rem;
-    text-transform: uppercase;
-    letter-spacing: 1px;
-    padding: 6px 12px;
-    border-radius: 6px;
-    transition: all 0.3s ease;
-    margin: 0 4px;
+.header-actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-left: auto;
 }
 
-.nav-item:hover {
-    color: #3b82f6 !important;
-    background: rgba(255, 255, 255, 0.05);
+.menu-btn {
+  width: 42px;
+  height: 42px;
+  display: none;
+  place-items: center;
+  border: 1px solid var(--line-strong);
+  border-radius: var(--radius-sm);
+  color: var(--ink);
+  background: transparent;
 }
 
-.nav-item-active {
-    color: #ffffff !important;
-    background: rgba(59, 130, 246, 0.4);
-    box-shadow: 0 2px 8px rgba(59, 130, 246, 0.3);
-    border: 1px solid rgba(255, 255, 255, 0.2);
+.menu-btn svg {
+  width: 20px;
+  height: 20px;
 }
 
-.action-btn {
-    background: linear-gradient(135deg, #3b82f6, #2563eb) !important;
-    border: 1px solid rgba(255, 255, 255, 0.2) !important;
-    font-weight: 800 !important;
-    font-size: 0.75rem !important;
-    box-shadow: 0 4px 10px rgba(37, 99, 235, 0.4) !important;
+.mobile-menu {
+  position: fixed;
+  inset: 0;
+  z-index: 60;
+  display: flex;
+  justify-content: flex-end;
+  background: rgba(28, 27, 24, 0.4);
+  animation: fade-in 0.2s ease;
 }
 
-@keyframes gauge-wiggle {
-  0%, 100% { transform: rotate(-30deg); }
-  50% { transform: rotate(45deg); }
+.mobile-panel {
+  width: min(88vw, 360px);
+  height: 100%;
+  padding: 20px;
+  overflow-y: auto;
+  border-left: 1px solid var(--line);
+  background: var(--paper);
+  animation: slide-in 0.28s cubic-bezier(0.2, 0.8, 0.2, 1);
 }
 
-.needle-anim {
-  animation: gauge-wiggle 3s ease-in-out infinite;
-  transform-origin: 12px 12px;
+@keyframes fade-in {
+  from { opacity: 0; }
 }
 
-@media (max-width: 960px) {
-  .header-container-pipe {
-    padding: 0 15px;
-    margin: 0 10px;
-    width: calc(100% - 20px);
+@keyframes slide-in {
+  from { transform: translateX(40px); opacity: 0; }
+}
+
+.mobile-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 18px;
+}
+
+.mobile-link {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 14px 4px;
+  border-bottom: 1px solid var(--line);
+  color: var(--ink-2);
+  font-weight: 500;
+}
+
+.mobile-link:hover,
+.mobile-link.router-link-active {
+  color: var(--ink);
+}
+
+.mobile-link.router-link-active {
+  box-shadow: inset 2px 0 0 var(--sirius-red);
+  padding-left: 12px;
+}
+
+/* Контакты остаются в подвале и мобильном меню; в шапке им не хватает места рядом с восемью пунктами. */
+@media (max-width: 1279px) {
+  .desktop-action {
+    display: none;
+  }
+}
+
+/* Восемь пунктов меню, логотип и «Демо» занимают около 1060 px — уже этого меню уходит в боковую панель. */
+@media (max-width: 1139px) {
+  .desktop-nav {
+    display: none;
+  }
+
+  .header-inner {
+    height: 64px;
+  }
+
+  .menu-btn {
+    display: grid;
   }
 }
 </style>
-

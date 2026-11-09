@@ -1,89 +1,43 @@
 <template>
-  <v-container class="my-10">
-    <v-row justify="center">
-      <v-col cols="12" md="8">
-        <v-card elevation="2">
-          <v-card-title class="text-h4 text-center pa-6">
-            Заявка на демо-версию ТГИД-07
-          </v-card-title>
-          <v-card-text>
-            <v-form ref="form" v-model="valid">
-              <v-text-field
-                v-model="form.full_name"
-                label="ФИО"
-                :rules="[rules.required]"
-                required
-                prepend-inner-icon="mdi-account"
-              />
-              <v-text-field
-                v-model="form.email"
-                label="Email"
-                type="email"
-                :rules="[rules.required, rules.email]"
-                required
-                prepend-inner-icon="mdi-email"
-              />
-              <v-text-field
-                v-model="form.phone"
-                label="Телефон"
-                prepend-inner-icon="mdi-phone"
-              />
-              <v-text-field
-                v-model="form.company"
-                label="Компания"
-                prepend-inner-icon="mdi-office-building"
-              />
-              <v-textarea
-                v-model="form.message"
-                label="Дополнительная информация"
-                rows="4"
-                prepend-inner-icon="mdi-message-text"
-              />
-              <v-btn
-                color="primary"
-                size="large"
-                variant="elevated"
-                block
-                @click="submitRequest"
-                :disabled="!valid || loading"
-                :loading="loading"
-              >
-                Отправить заявку
-              </v-btn>
-            </v-form>
-          </v-card-text>
-        </v-card>
-
-        <v-alert
-          v-if="success"
-          type="success"
-          class="mt-4"
-        >
-          Заявка успешно отправлена! Мы свяжемся с вами в ближайшее время.
-        </v-alert>
-
-        <v-alert
-          v-if="error"
-          type="error"
-          class="mt-4"
-        >
-          {{ error }}
-        </v-alert>
-      </v-col>
-    </v-row>
-  </v-container>
+  <CmsPageRenderer slug="demo">
+    <div class="page">
+    <section class="page-hero">
+      <div class="container demo-grid">
+        <div>
+          <UBadge color="primary" variant="subtle" size="lg">Демо</UBadge>
+          <h1 class="display-title">Покажем ТГИД-07 на ваших сценариях</h1>
+          <p class="lead">Оставьте заявку, и мы подготовим демонстрацию с фокусом на моделирование, ГИС, эксплуатацию, web-доступ или администрирование сайта.</p>
+        </div>
+        <form class="card card-pad demo-form" @submit.prevent="submitRequest">
+          <label class="field-label">ФИО</label>
+          <input v-model="form.full_name" class="field" required>
+          <label class="field-label">Email</label>
+          <input v-model="form.email" class="field" type="email" required>
+          <label class="field-label">Телефон</label>
+          <input v-model="form.phone" class="field">
+          <label class="field-label">Компания</label>
+          <input v-model="form.company" class="field">
+          <label class="field-label">Что показать на демо</label>
+          <textarea v-model="form.message" class="field" rows="4"></textarea>
+          <button class="btn-link btn-primary" type="submit" :disabled="loading">
+            {{ loading ? 'Отправляем...' : 'Отправить заявку' }}
+          </button>
+          <p v-if="success" class="form-success">Заявка отправлена. Мы свяжемся с вами.</p>
+          <p v-if="error" class="form-error">{{ error }}</p>
+        </form>
+      </div>
+    </section>
+    </div>
+  </CmsPageRenderer>
 </template>
 
 <script setup lang="ts">
-import { ref, reactive } from 'vue'
-
 useSEO({
-  title: 'Заявка на демо - ТГИД-07',
-  description: 'Оставьте заявку на получение демо-версии системы ТГИД-07'
+  title: 'Запрос демонстрации ТГИД-07',
+  description: 'Оставьте заявку на демонстрацию ТГИД-07 от ПКФ «Сириус».'
 })
-useStructuredData()
 
-const valid = ref(false)
+const config = useRuntimeConfig()
 const loading = ref(false)
 const success = ref(false)
 const error = ref('')
@@ -96,36 +50,28 @@ const form = reactive({
   message: ''
 })
 
-const rules = {
-  required: (value: string) => !!value || 'Обязательное поле',
-  email: (value: string) => {
-    const pattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
-    return pattern.test(value) || 'Некорректный email'
-  }
-}
-
 const submitRequest = async () => {
   loading.value = true
-  error.value = ''
   success.value = false
-
+  error.value = ''
   try {
-    const config = useRuntimeConfig()
-    const response = await $fetch(`${config.public.apiBase}/api/demo-requests`, {
-      method: 'POST',
-      body: form
-    })
-
+    await $fetch(`${config.public.apiBase}/api/demo-requests`, { method: 'POST', body: form })
     success.value = true
-    // Reset form
-    Object.keys(form).forEach(key => {
-      form[key as keyof typeof form] = ''
-    })
+    Object.assign(form, { full_name: '', email: '', phone: '', company: '', message: '' })
   } catch (err: any) {
-    error.value = err.message || 'Произошла ошибка при отправке заявки'
+    error.value = err?.data?.detail || 'Не удалось отправить заявку'
   } finally {
     loading.value = false
   }
 }
 </script>
 
+<style scoped>
+.page-hero { min-height: 100vh; display: grid; align-items: center; padding: 124px 0 70px; }
+.demo-grid { display: grid; grid-template-columns: 1fr 0.78fr; gap: 42px; align-items: center; }
+.demo-form { display: grid; gap: 10px; }
+button { margin-top: 8px; }
+.form-success { color: #166534; font-weight: 800; }
+.form-error { color: #991b1b; font-weight: 800; }
+@media (max-width: 900px) { .demo-grid { grid-template-columns: 1fr; } }
+</style>

@@ -1,62 +1,144 @@
 <template>
-  <div>
-    <h1 class="text-h4 mb-4">Панель управления</h1>
-    <v-row>
-      <v-col
-        cols="12"
-        md="4"
-        v-for="(stat, index) in stats"
-        :key="index"
-      >
-        <v-card elevation="2">
-          <v-card-title>
-            <v-icon :icon="stat.icon" :color="stat.color" class="mr-2" />
-            {{ stat.title }}
-          </v-card-title>
-          <v-card-text>
-            <div class="text-h3">{{ stat.value }}</div>
-            <div class="text-caption text-grey">{{ stat.subtitle }}</div>
-          </v-card-text>
-        </v-card>
-      </v-col>
-    </v-row>
+  <div class="admin-page">
+    <div class="admin-page-header">
+      <div>
+        <span class="eyebrow">Обзор</span>
+        <h1 class="admin-title">Дашборд CRM</h1>
+        <p class="admin-subtitle">Заявки, страницы, блоки и просмотры сайта в одном рабочем контуре.</p>
+      </div>
+      <NuxtLink to="/admin/builder" class="btn-link btn-primary">
+        <UIcon name="i-lucide-panels-top-left" />
+        Открыть конструктор
+      </NuxtLink>
+    </div>
+
+    <p v-if="error" class="status-chip status-danger">{{ error }}</p>
+
+    <div class="grid grid-4">
+      <article v-for="stat in stats" :key="stat.title" class="card card-pad metric-card">
+        <div class="icon-box"><UIcon :name="stat.icon" /></div>
+        <strong>{{ loading ? '...' : stat.value }}</strong>
+        <h2>{{ stat.title }}</h2>
+        <p>{{ stat.subtitle }}</p>
+      </article>
+    </div>
+
+    <div class="grid grid-2 dashboard-grid">
+      <article class="card card-pad quick-card">
+        <h2>Быстрые действия</h2>
+        <div class="quick-actions">
+          <NuxtLink class="btn-link btn-secondary" to="/admin/builder">Конструктор</NuxtLink>
+          <NuxtLink class="btn-link btn-secondary" to="/admin/seo">SEO</NuxtLink>
+          <NuxtLink class="btn-link btn-secondary" to="/admin/demo-requests">Заявки</NuxtLink>
+          <NuxtLink class="btn-link btn-secondary" to="/">Сайт</NuxtLink>
+        </div>
+      </article>
+
+      <article class="card card-pad quick-card">
+        <h2>Топ страниц</h2>
+        <div v-if="analytics.top_pages?.length" class="mini-list">
+          <div v-for="page in analytics.top_pages" :key="page.path">
+            <span>{{ page.path }}</span>
+            <strong>{{ page.views }}</strong>
+          </div>
+        </div>
+        <p v-else class="muted">Данные появятся после первых просмотров.</p>
+      </article>
+    </div>
   </div>
 </template>
 
 <script setup lang="ts">
-definePageMeta({
-  layout: 'admin',
-  middleware: 'auth'
-})
+import { computed, onMounted, ref } from 'vue'
 
-useHead({
-  title: 'Панель управления - Сириус'
-})
+definePageMeta({ layout: 'admin', middleware: 'auth' })
+useHead({ title: 'CRM Sirius' })
 
 const { token } = useAuth()
-const stats = ref([
-  { title: 'Всего заявок', value: 0, icon: 'mdi-email', color: 'primary', subtitle: 'За все время' },
-  { title: 'Ожидают обработки', value: 0, icon: 'mdi-clock', color: 'warning', subtitle: 'Требуют внимания' },
-  { title: 'Элементов контента', value: 0, icon: 'mdi-file-document', color: 'success', subtitle: 'Всего на сайте' }
+const config = useRuntimeConfig()
+const loading = ref(false)
+const error = ref('')
+const analytics = ref<any>({})
+
+const stats = computed(() => [
+  { title: 'Всего заявок', value: analytics.value.total_demo_requests || 0, icon: 'i-lucide-mails', subtitle: 'За все время' },
+  { title: 'Ожидают обработки', value: analytics.value.pending_requests || 0, icon: 'i-lucide-clock-alert', subtitle: 'Нужно связаться' },
+  { title: 'Страницы CMS', value: analytics.value.total_pages || 0, icon: 'i-lucide-file-stack', subtitle: `${analytics.value.active_pages || 0} активных` },
+  { title: 'Просмотры сегодня', value: analytics.value.views_today || 0, icon: 'i-lucide-chart-no-axes-combined', subtitle: `${analytics.value.page_views || 0} всего` }
 ])
 
-onMounted(async () => {
-  if (token.value) {
-    try {
-      const config = useRuntimeConfig()
-      const analytics = await $fetch(`${config.public.apiBase}/api/admin/analytics`, {
-        headers: {
-          Authorization: `Bearer ${token.value}`
-        }
-      })
-      
-      stats.value[0].value = analytics.total_demo_requests || 0
-      stats.value[1].value = analytics.pending_requests || 0
-      stats.value[2].value = analytics.total_content_items || 0
-    } catch (error) {
-      console.error('Error fetching analytics:', error)
-    }
+const load = async () => {
+  loading.value = true
+  error.value = ''
+  try {
+    analytics.value = await $fetch(`${config.public.apiBase}/api/admin/analytics`, {
+      headers: { Authorization: `Bearer ${token.value}` }
+    })
+  } catch (err: any) {
+    error.value = err?.data?.detail || 'Не удалось загрузить аналитику'
+  } finally {
+    loading.value = false
   }
-})
+}
+
+onMounted(load)
 </script>
 
+<style scoped>
+.metric-card strong {
+  display: block;
+  margin-top: 18px;
+  font-size: 2.5rem;
+  line-height: 1;
+}
+
+.metric-card h2 {
+  margin: 10px 0 5px;
+  font-size: 1.1rem;
+  font-weight: 920;
+}
+
+.metric-card p,
+.muted {
+  margin: 0;
+  color: var(--muted);
+}
+
+.dashboard-grid {
+  align-items: start;
+}
+
+.quick-card h2 {
+  margin: 0 0 16px;
+  font-weight: 920;
+}
+
+.quick-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.mini-list {
+  display: grid;
+  gap: 10px;
+}
+
+.mini-list div {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 10px 0;
+  border-bottom: 1px solid var(--line);
+}
+
+.mini-list span {
+  color: #334155;
+  font-weight: 800;
+}
+
+.mini-list strong {
+  color: var(--sirius-red-dark);
+}
+</style>

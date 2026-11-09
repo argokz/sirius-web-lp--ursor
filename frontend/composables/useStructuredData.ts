@@ -4,13 +4,12 @@ export const useStructuredData = () => {
   const organizationSchema = {
     '@context': 'https://schema.org',
     '@type': 'Organization',
-    name: 'Сириус',
+    name: 'ПКФ «Сириус»',
     url: 'https://itwin.kz',
     logo: 'https://itwin.kz/logo.png',
-    description: 'Автоматизированная система управления теплоснабжением ТГИД-07',
+    description: 'Разработчик инженерных цифровых решений и систем управления теплоснабжением',
     contactPoint: {
       '@type': 'ContactPoint',
-      telephone: '+7-XXX-XXX-XX-XX',
       contactType: 'customer service',
       email: 'info@itwin.kz'
     }
@@ -22,7 +21,7 @@ export const useStructuredData = () => {
     name: 'ТГИД-07',
     applicationCategory: 'BusinessApplication',
     operatingSystem: 'Web',
-    description: 'Многофункциональная автоматизированная система для цифрового моделирования и управления режимами теплоснабжения',
+    description: 'Автоматизированная система для теплогидравлического моделирования, ГИС-паспортизации и управления эксплуатацией тепловых сетей',
     offers: {
       '@type': 'Offer',
       priceCurrency: 'KZT',
@@ -33,11 +32,11 @@ export const useStructuredData = () => {
   const websiteSchema = {
     '@context': 'https://schema.org',
     '@type': 'WebSite',
-    name: 'Сириус - ТГИД-07',
+    name: 'ТГИД-07 — ПКФ «Сириус»',
     url: 'https://itwin.kz',
     potentialAction: {
       '@type': 'SearchAction',
-      target: 'https://itwin.kz/search?q={search_term_string}',
+      target: 'https://itwin.kz/docs?q={search_term_string}',
       'query-input': 'required name=search_term_string'
     }
   }
@@ -46,17 +45,17 @@ export const useStructuredData = () => {
     script: [
       {
         type: 'application/ld+json',
-        children: JSON.stringify(organizationSchema)
+        innerHTML: JSON.stringify(organizationSchema)
       },
       ...(route.path === '/product' ? [{
         type: 'application/ld+json',
-        children: JSON.stringify(productSchema)
+        innerHTML: JSON.stringify(productSchema)
       }] : []),
       {
         type: 'application/ld+json',
-        children: JSON.stringify(websiteSchema)
+        innerHTML: JSON.stringify(websiteSchema)
       }
-    ]
+    ] as any
   })
 }
 

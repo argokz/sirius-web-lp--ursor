@@ -9,10 +9,10 @@ export const useSEO = (options: {
   const route = useRoute()
   
   const baseUrl = 'https://itwin.kz'
-  const defaultImage = `${baseUrl}/logo.png`
+  const defaultImage = `${baseUrl}/og-sirius.jpg`
   
-  const title = options.title || 'Сириус - ТГИД-07'
-  const description = options.description || 'Автоматизированная система управления теплоснабжением ТГИД-07'
+  const title = options.title || 'ТГИД-07 — ПКФ «Сириус»'
+  const description = options.description || 'АСУП ТГИД-07 от ПКФ «Сириус»: цифровой контур моделирования, паспортизации и эксплуатации тепловых сетей.'
   const image = options.image || defaultImage
   const url = options.url || `${baseUrl}${route.path}`
   const type = options.type || 'website'
@@ -21,7 +21,7 @@ export const useSEO = (options: {
     title,
     meta: [
       { name: 'description', content: description },
-      { name: 'keywords', content: 'ТГИД-07, теплоснабжение, автоматизация, Сириус' },
+      { name: 'keywords', content: 'ТГИД-07, ТГИД, теплоснабжение, автоматизация теплосетей, ПКФ Сириус, гидравлический расчет, ГИС теплосетей' },
       
       // Open Graph
       { property: 'og:title', content: title },
@@ -29,7 +29,7 @@ export const useSEO = (options: {
       { property: 'og:image', content: image },
       { property: 'og:url', content: url },
       { property: 'og:type', content: type },
-      { property: 'og:site_name', content: 'Сириус' },
+      { property: 'og:site_name', content: 'ПКФ «Сириус»' },
       { property: 'og:locale', content: 'ru_RU' },
       
       // Twitter Card

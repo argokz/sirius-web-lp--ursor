@@ -1,284 +1,87 @@
 <template>
-  <div class="modeling-page">
-    <!-- Hero Section -->
-    <section class="hero-section glass-effect">
-      <v-container>
-        <div class="blob-bg" style="top: 0; right: 0;"></div>
-        <v-row align="center" justify="center">
-          <v-col cols="12" md="10" lg="8" class="text-center">
-            <div class="badge fade-in-up">Раздел 2. Моделирование</div>
-            <h1 class="display-1 fade-in-up delay-1 primary-gradient-text">Высокоточные теплогидравлические расчеты</h1>
-            <p class="subtitle fade-in-up delay-2">
-              Сердце системы — модуль создания математической модели тепловой сети, 
-              позволяющий моделировать поведение системы в любых условиях.
+  <CmsPageRenderer slug="modeling">
+    <PageShell
+    eyebrow="Моделирование"
+    title="Высокоточные теплогидравлические расчеты и наладка режимов"
+    description="Сердце ТГИД-07 - математическая модель теплосети. Она показывает поведение системы в плановых, фактических, летних и аварийных условиях до выезда бригады на место."
+    image="/modeling_dashboard.webp"
+    section-eyebrow="Расчеты"
+    section-title="Модель, которой можно доверять"
+    :items="items"
+    cta-title="Закажите расчет модели"
+    cta-text="Покажем плановый и фактический режимы, пьезометрический график, теплопотери и узкие места на ваших исходных данных."
+  >
+    <section class="section-tight">
+      <div class="container">
+        <div class="content-band split-panel">
+          <div>
+            <span class="eyebrow">Инженерный результат</span>
+            <h2 class="section-title">Расчет отвечает не только “сколько”, но и “почему”</h2>
+            <p class="lead">
+              Система помогает найти причины недотопов, перетопов, перерасхода энергии, падения напора, кавитации и перегрузки оборудования. Инженер видит решение на схеме, в пьезометрическом графике и в расчетных таблицах.
             </p>
-          </v-col>
-        </v-row>
-      </v-container>
+          </div>
+          <div class="detail-grid">
+            <article v-for="mode in modes" :key="mode.title" class="detail-card">
+              <h3>{{ mode.title }}</h3>
+              <p>{{ mode.text }}</p>
+            </article>
+          </div>
+        </div>
+      </div>
     </section>
 
-    <!-- Interactive Zest: Calculation Demo -->
-    <section class="calculation-zest py-16 bg-pattern-dots">
-      <v-container>
-        <v-card class="glass-card pa-8 apple-shadow scroll-reveal">
-          <v-row align="center">
-            <v-col cols="12" md="5">
-              <h2 class="mb-4 text-h4 font-weight-black text-slate-800">Мгновенный подбор оборудования</h2>
-              <p class="text-slate-600 mb-6 text-body-1">
-                Система автоматически подберет диаметр сужающего устройства на основе ваших параметров. 
-                Встроенный интеллектуальный алгоритм исключает ошибки проектирования.
-              </p>
-              <div class="mt-6">
-                <v-btn color="primary" variant="elevated" rounded="pill" size="large" class="shadow-premium">
-                  Попробовать демо
-                </v-btn>
-              </div>
-            </v-col>
-            <v-col cols="12" md="7">
-              <div class="interactive-diagram overflow-hidden rounded-xl premium-border apple-shadow">
-                 <v-img src="/modeling_dashboard.png" alt="Моделирование тепловых сетей" cover class="rounded-xl transition-transform glow-hover" />
-              </div>
-            </v-col>
-          </v-row>
-        </v-card>
-      </v-container>
+    <section class="section">
+      <div class="container">
+        <span class="eyebrow">Диагностика</span>
+        <h2 class="section-title">Пьезометрический график показывает режим по профилю сети</h2>
+        <div class="process-flow">
+          <article v-for="(step, index) in diagnostics" :key="step.title" class="process-step">
+            <span>{{ index + 1 }}</span>
+            <h3>{{ step.title }}</h3>
+            <p>{{ step.text }}</p>
+          </article>
+        </div>
+      </div>
     </section>
-
-    <!-- Technical Scheme (main-func.png) -->
-    <section class="technical-scheme py-16 bg-white">
-      <v-container>
-        <v-card class="glass-card pa-8 apple-shadow scroll-reveal">
-          <v-row align="center">
-            <v-col cols="12" md="5">
-              <h2 class="mb-4 primary-gradient-text">Функциональная схема</h2>
-              <p>Наглядное представление взаимосвязи модулей системы ТГИД-07. Обеспечение бесшовного обмена данными между расчетным ядром и базой ГИС.</p>
-              <v-list class="bg-transparent mt-4">
-                <v-list-item prepend-icon="mdi-check-all" title="Целостность данных" />
-                <v-list-item prepend-icon="mdi-check-all" title="Высокая скорость обработки" />
-              </v-list>
-            </v-col>
-            <v-col cols="12" md="7">
-              <div class="scheme-wrapper glass-effect pa-4 rounded-xl border">
-                <v-img src="/main-func.png" alt="Функциональная схема ТГИД-07" class="rounded-lg" />
-              </div>
-            </v-col>
-          </v-row>
-        </v-card>
-      </v-container>
-    </section>
-
-    <!-- Key Features Grid -->
-    <section class="features-grid py-16 bg-pattern-grid">
-      <v-container>
-        <v-row>
-          <v-col cols="12" md="6" class="scroll-reveal">
-            <v-card class="feature-card elevation-0">
-              <div class="icon-box primary-gradient">
-                <v-icon icon="mdi-calculator" size="40" color="white" />
-              </div>
-              <h3>Плановый режим</h3>
-              <p>Определение идеального состояния сети для подбора дросселирующих устройств (сопел, шайб). Расчет с учетом нормативных тепловых потерь.</p>
-            </v-card>
-          </v-col>
-          <v-col cols="12" md="6" class="scroll-reveal" data-delay="100">
-            <v-card class="feature-card elevation-0">
-              <div class="icon-box secondary-gradient">
-                <v-icon icon="mdi-alert-decagram" size="40" color="white" />
-              </div>
-              <h3>Фактический режим</h3>
-              <p>Моделирование реальной ситуации в трубах с учетом текущего состояния оборудования, дефектов и отключений.</p>
-            </v-card>
-          </v-col>
-          <v-col cols="12" md="6" class="scroll-reveal">
-            <v-card class="feature-card elevation-0">
-              <div class="icon-box accent-gradient">
-                <v-icon icon="mdi-water-sync" size="40" color="white" />
-              </div>
-              <h3>Летний режим и ГВС</h3>
-              <p>Специализированные алгоритмы для расчета гидравлики в межотопительный период с оптимизацией насосных станций.</p>
-            </v-card>
-          </v-col>
-          <v-col cols="12" md="6" class="scroll-reveal" data-delay="100">
-            <v-card class="feature-card elevation-0">
-              <div class="icon-box info-gradient">
-                <v-icon icon="mdi-chart-areaspline" size="40" color="white" />
-              </div>
-              <h3>Пьезометрические графики</h3>
-              <p>Автоматическое построение графиков давлений по любому пути. Визуальный анализ напоров, вскипания и кавитации.</p>
-            </v-card>
-          </v-col>
-        </v-row>
-      </v-container>
-    </section>
-
-    <!-- Detailed Section: Thermal Losses -->
-    <section class="detail-section py-16 bg-light">
-      <v-container>
-        <v-row align="center">
-          <v-col cols="12" md="6" class="scroll-reveal-left">
-            <h2 class="section-title">Расчет тепловых потерь</h2>
-            <p>Модуль рассчитывает нормативные и фактические потери тепла через изоляцию и с утечками. Это база для экономического обоснования тарифов.</p>
-            <v-list class="bg-transparent">
-              <v-list-item prepend-icon="mdi-check-circle" title="Учет видов прокладки (надземная, канальная)" />
-              <v-list-item prepend-icon="mdi-check-circle" title="Анализ состояния изоляции" />
-              <v-list-item prepend-icon="mdi-check-circle" title="Учет температуры грунта" />
-            </v-list>
-          </v-col>
-          <v-col cols="12" md="6" class="scroll-reveal-right">
-            <div class="illustration-box interactive-hover">
-               <v-icon icon="mdi-thermometer-lines" size="120" color="primary" class="opacity-20" />
-               <div class="animated-pulse"></div>
-            </div>
-          </v-col>
-        </v-row>
-      </v-container>
-    </section>
-
-    <!-- CTA -->
-    <section class="cta-section py-16 text-center">
-      <v-container>
-        <v-btn size="x-large" color="primary" dark rounded="pill" class="cta-btn" to="/demo">
-          Заказать расчет модели
-          <v-icon end icon="mdi-chevron-right" />
-        </v-btn>
-      </v-container>
-    </section>
-  </div>
+    </PageShell>
+    <template #append>
+      <ProductCapabilities
+        :sections="['05-analysis', '07-source-data']"
+        eyebrow="Функции моделирования"
+        title="Расчёты, анализ режима и сценарии — в веб-версии"
+        description="Подготовка данных, разбор режима, тематические карты, прогнозы и сценарии «что если». Каждая функция открывает инструкцию со снимками экрана."
+      />
+    </template>
+  </CmsPageRenderer>
 </template>
 
 <script setup lang="ts">
-const { observeElements } = useScrollAnimation()
-
-onMounted(() => {
-  observeElements()
-})
-
 useSEO({
-  title: 'Моделирование и расчеты теплосетей ТГИД-07 — Точность 99.9%',
-  description: 'Создайте идеальную математическую модель вашей сети. Теплогидравлические расчеты любой сложности, наладка режимов и оптимизация оборудования с ТГИД-07.'
+  title: 'Моделирование тепловых сетей — ТГИД-07',
+  description: 'Плановые, фактические, летние и аварийные теплогидравлические расчеты в ТГИД-07 от ПКФ «Сириус».'
 })
+
+const items = [
+  { icon: 'i-lucide-git-branch', title: 'Плановый режим', text: 'Расчет идеального состояния сети для настройки дросселирующих устройств, сопел и шайб с учетом нормативных потерь.' },
+  { icon: 'i-lucide-activity', title: 'Фактический режим', text: 'Моделирование реальной ситуации с учетом дефектов, отключений, состояния оборудования и ремонтных ограничений.' },
+  { icon: 'i-lucide-sun', title: 'Летний режим и ГВС', text: 'Алгоритмы для межотопительного периода, тупиковых и циркуляционных схем горячего водоснабжения.' },
+  { icon: 'i-lucide-chart-line', title: 'Пьезометрические графики', text: 'Автоматическое построение графиков давления по выбранному пути с учетом рельефа и статических зон.' },
+  { icon: 'i-lucide-thermometer', title: 'Тепловые потери', text: 'Нормативные и фактические потери через изоляцию и утечки с учетом типа прокладки и температуры грунта.' },
+  { icon: 'i-lucide-settings-2', title: 'Дросселирующие устройства', text: 'Расчет диаметров сопел и диафрагм до десятых долей миллиметра для балансировки сопротивления сети.' }
+]
+
+const modes = [
+  { title: 'До изменения режима', text: 'Инженер видит, какие участки ограничивают сеть, где давление выходит за допустимые границы и какие потребители рискуют получить недотоп.' },
+  { title: 'После переключения', text: 'Можно заранее проверить последствия вывода участка, изменения насосной группы или изменения нагрузок у абонентов.' },
+  { title: 'Для экономического обоснования', text: 'Расчет теплопотерь и режимных отклонений формирует базу для тарифов, инвестиций и программ энергосбережения.' },
+  { title: 'Для диспетчера', text: 'Сравнение расчетной модели и фактической телеметрии помогает выявлять скрытые порывы и несанкционированный отбор воды.' }
+]
+
+const diagnostics = [
+  { title: 'Выбрать путь', text: 'Маршрут строится по магистрали, распределительной сети или проблемному направлению потребителя.' },
+  { title: 'Построить график', text: 'Система автоматически показывает линии статического и динамического давления относительно профиля местности.' },
+  { title: 'Найти опасность', text: 'На графике видны зоны вскипания, кавитации, недостаточного напора или превышения допустимых давлений.' },
+  { title: 'Принять решение', text: 'Инженер получает основание для настройки, ремонта, изменения схемы или регулирования насосной станции.' }
+]
 </script>
-
-<style scoped>
-.modeling-page {
-  background: #ffffff;
-}
-
-.hero-section {
-  padding: 100px 0;
-  background: radial-gradient(circle at top right, rgba(102, 126, 234, 0.05), transparent);
-}
-
-.badge {
-  display: inline-block;
-  padding: 6px 16px;
-  background: rgba(102, 126, 234, 0.1);
-  color: #667eea;
-  border-radius: 20px;
-  font-weight: 600;
-  font-size: 0.9rem;
-  margin-bottom: 24px;
-}
-
-.display-1 {
-  font-size: 3.5rem;
-  font-weight: 800;
-  line-height: 1.1;
-  color: #1a1a1a;
-  margin-bottom: 24px;
-}
-
-.subtitle {
-  font-size: 1.25rem;
-  color: #666;
-  max-width: 600px;
-  margin: 0 auto;
-}
-
-.feature-card {
-  padding: 40px;
-  border-radius: 24px;
-  background: #f8fafc;
-  height: 100%;
-  transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-}
-
-.feature-card:hover {
-  transform: translateY(-10px);
-  background: #ffffff;
-  box-shadow: 0 20px 40px rgba(0,0,0,0.05) !important;
-}
-
-.icon-box {
-  width: 80px;
-  height: 80px;
-  border-radius: 20px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  margin-bottom: 24px;
-}
-
-.primary-gradient { background: linear-gradient(135deg, #667eea, #764ba2); }
-.secondary-gradient { background: linear-gradient(135deg, #fb923c, #f97316); }
-.accent-gradient { background: linear-gradient(135deg, #38bdf8, #0ea5e9); }
-.info-gradient { background: linear-gradient(135deg, #4ade80, #22c55e); }
-
-h3 {
-  font-size: 1.5rem;
-  font-weight: 700;
-  margin-bottom: 16px;
-  color: #1a1a1a;
-}
-
-.bg-light { background: #fbfcfe; }
-
-.illustration-box {
-  height: 300px;
-  background: #ffffff;
-  border-radius: 32px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  position: relative;
-  overflow: hidden;
-  box-shadow: inset 0 0 40px rgba(0,0,0,0.02);
-}
-
-.animated-pulse {
-  position: absolute;
-  width: 100%;
-  height: 100%;
-  background: radial-gradient(circle, rgba(102, 126, 234, 0.05) 0%, transparent 70%);
-  animation: pulse 4s infinite;
-}
-
-@keyframes pulse {
-  0% { transform: scale(0.8); opacity: 0.5; }
-  50% { transform: scale(1.2); opacity: 0.8; }
-  100% { transform: scale(0.8); opacity: 0.5; }
-}
-
-.cta-btn {
-  padding: 0 40px;
-  font-weight: 700;
-  letter-spacing: 0.5px;
-  box-shadow: 0 10px 20px rgba(102, 126, 234, 0.3);
-}
-
-/* Animations from useAdvancedAnimations will trigger via IntersectionObserver */
-.scroll-reveal {
-  opacity: 0;
-  transform: translateY(30px);
-  transition: all 0.8s ease-out;
-}
-
-.scroll-reveal.animate-in {
-  opacity: 1;
-  transform: translateY(0);
-}
-
-@media (max-width: 960px) {
-  .display-1 { font-size: 2.5rem; }
-}
-</style>

@@ -13,7 +13,7 @@ export const useAdvancedAnimations = () => {
             // Для элементов с задержкой
             const delay = entry.target.getAttribute('data-delay')
             if (delay) {
-              entry.target.style.animationDelay = `${delay}ms`
+              ;(entry.target as HTMLElement).style.animationDelay = `${delay}ms`
             }
           }
         })
