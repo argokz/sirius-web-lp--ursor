@@ -268,7 +268,7 @@
                 <input v-model="parsedPayload.image" class="field" placeholder="/main-func.webp">
                 <button type="button" class="btn-link btn-secondary upload-action-btn" @click="triggerUpload('block')"><UIcon name="i-lucide-upload" />Загрузить</button>
                 <button type="button" class="btn-link btn-secondary upload-action-btn" @click="showMediaPicker = true"><UIcon name="i-lucide-images" />Библиотека</button>
-                <input ref="fileInput" type="file" accept="image/*" style="display:none" @change="handleFileUpload($event, 'block')" />
+                <input ref="fileInput" type="file" accept="image/png,image/jpeg,image/webp,image/gif" style="display:none" @change="handleFileUpload($event, 'block')" />
               </div>
             </div>
           </div>
@@ -345,7 +345,7 @@
                       <button type="button" class="btn-link btn-secondary btn-xs" @click="triggerItemUpload(idx)"><UIcon name="i-lucide-upload" /></button>
                       <button type="button" class="btn-link btn-secondary btn-xs" @click="openItemMediaPicker(idx)"><UIcon name="i-lucide-images" /></button>
                     </div>
-                    <input :ref="(el) => setItemFileInput(el, idx)" type="file" accept="image/*" style="display:none" @change="handleItemFileUpload($event, idx)" />
+                    <input :ref="(el) => setItemFileInput(el, idx)" type="file" accept="image/png,image/jpeg,image/webp,image/gif" style="display:none" @change="handleItemFileUpload($event, idx)" />
                     <div v-if="item.image" class="item-image-preview-sm">
                       <img :src="item.image" alt="thumb" />
                     </div>
@@ -382,7 +382,7 @@
                         <button type="button" class="btn-link btn-secondary btn-xs" @click="triggerItemUpload(idx)"><UIcon name="i-lucide-upload" /></button>
                         <button type="button" class="btn-link btn-secondary btn-xs" @click="openItemMediaPicker(idx)"><UIcon name="i-lucide-images" /></button>
                       </div>
-                      <input :ref="(el) => setItemFileInput(el, idx)" type="file" accept="image/*" style="display:none" @change="handleItemFileUpload($event, idx)" />
+                      <input :ref="(el) => setItemFileInput(el, idx)" type="file" accept="image/png,image/jpeg,image/webp,image/gif" style="display:none" @change="handleItemFileUpload($event, idx)" />
                     </div>
                   </template>
                 </div>
@@ -511,7 +511,7 @@
             <input v-model="seoForm.og_image" class="field" placeholder="URL изображения">
             <button type="button" class="btn-link btn-secondary upload-action-btn" @click="triggerUpload('seo')"><UIcon name="i-lucide-upload" />Загрузить</button>
             <button type="button" class="btn-link btn-secondary upload-action-btn" @click="showMediaPickerSeo = true"><UIcon name="i-lucide-images" />Библиотека</button>
-            <input ref="seoFileInput" type="file" accept="image/*" style="display:none" @change="handleFileUpload($event, 'seo')" />
+            <input ref="seoFileInput" type="file" accept="image/png,image/jpeg,image/webp,image/gif" style="display:none" @change="handleFileUpload($event, 'seo')" />
           </div>
         </div>
         <h3 class="form-section-title">Twitter Card</h3>
@@ -815,7 +815,7 @@ const publishPage = async () => {
   try {
     const res = await $fetch<{ message: string }>(`${config.public.apiBase}/api/admin/pages/${selectedPageId.value}/publish`, {
       method: 'POST',
-      headers: { Authorization: `Bearer ${useCookie('access_token').value}` }
+      headers: { Authorization: `Bearer ${token.value}` }
     })
     alert(res.message)
     refreshPreview()

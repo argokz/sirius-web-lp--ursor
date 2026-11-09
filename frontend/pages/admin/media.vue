@@ -10,7 +10,7 @@
         <label class="btn-link btn-primary upload-label">
           <UIcon name="i-lucide-upload" />
           Загрузить файл
-          <input ref="fileInputRef" type="file" accept="image/*,application/pdf,.doc,.docx,.xls,.xlsx" multiple style="display:none" @change="uploadFiles" />
+          <input ref="fileInputRef" type="file" accept="image/png,image/jpeg,image/webp,image/gif,application/pdf,.doc,.docx,.xls,.xlsx" multiple style="display:none" @change="uploadFiles" />
         </label>
         <button class="btn-link btn-secondary" type="button" :disabled="loading" @click="loadFiles">
           <UIcon name="i-lucide-refresh-cw" />

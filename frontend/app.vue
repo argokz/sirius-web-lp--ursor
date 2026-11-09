@@ -20,13 +20,16 @@ useHead({
       children: computed(() => {
         if (!settings.value) return ''
         let css = ':root {\n'
-        if (settings.value['theme.primary_color']) {
-          const c = settings.value['theme.primary_color']
+        // значения из настроек CMS попадают в <style> — только цвет #rgb…#rrggbbaa и число, иначе CSS-инъекция
+        const color = String(settings.value['theme.primary_color'] ?? '')
+        if (/^#[0-9a-f]{3,8}$/i.test(color)) {
+          const c = color
           css += `  --sirius-red: ${c};\n`
           css += `  --ui-primary: ${c};\n`
         }
-        if (settings.value['theme.border_radius']) {
-          const r = settings.value['theme.border_radius']
+        const radius = Number(settings.value['theme.border_radius'])
+        if (settings.value['theme.border_radius'] && Number.isFinite(radius) && radius >= 0 && radius <= 64) {
+          const r = radius
           css += `  --ui-radius: ${r}px;\n`
           css += `  --radius: ${r}px;\n`
         }

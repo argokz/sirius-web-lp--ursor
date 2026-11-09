@@ -1,6 +1,5 @@
 import json
 import os
-import shutil
 import uuid
 from datetime import datetime, timezone
 from pathlib import Path
@@ -148,24 +147,18 @@ def update_demo_request_status(
     return db_request
 
 
+# SVG не принимаем: /uploads раздаётся с того же адреса, что и сайт, и скрипт в SVG выполнился бы на itwin.kz.
+UPLOAD_EXTENSIONS = {"png", "jpg", "jpeg", "webp", "gif", "pdf", "doc", "docx", "xls", "xlsx"}
+UPLOAD_MAX_BYTES = 25 * 1024 * 1024
+UPLOAD_CHUNK_BYTES = 1024 * 1024
+
+
 @router.post("/upload")
-async def upload_file(
+def upload_file(
     file: UploadFile = File(...),
     admin_user: User = Depends(get_current_superuser),
 ):
-    allowed_extensions = {
-        "png",
-        "jpg",
-        "jpeg",
-        "webp",
-        "svg",
-        "gif",
-        "pdf",
-        "doc",
-        "docx",
-        "xls",
-        "xlsx",
-    }
+    # Обычный def: запись файла синхронная, FastAPI выполнит её в пуле потоков, не блокируя цикл событий.
     upload_dir = "uploads"
     os.makedirs(upload_dir, exist_ok=True)
 
@@ -173,14 +166,24 @@ async def upload_file(
     if not original_name:
         raise HTTPException(status_code=400, detail="Filename is required")
 
-    extension = Path(original_name).suffix.lower().replace(".", "")
-    if extension and extension not in allowed_extensions:
+    extension = Path(original_name).suffix.lower().lstrip(".")
+    if extension not in UPLOAD_EXTENSIONS:
         raise HTTPException(status_code=400, detail="File type is not allowed")
 
-    safe_filename = f"{uuid.uuid4().hex}_{original_name.replace(' ', '_')}"
+    # Имя на диске — без исходного имени: в нём бывают пробелы, юникод и управляющие символы.
+    safe_filename = f"{uuid.uuid4().hex}.{extension}"
     file_path = os.path.join(upload_dir, safe_filename)
-    with open(file_path, "wb") as buffer:
-        shutil.copyfileobj(file.file, buffer)
+    written = 0
+    try:
+        with open(file_path, "wb") as buffer:
+            while chunk := file.file.read(UPLOAD_CHUNK_BYTES):
+                written += len(chunk)
+                if written > UPLOAD_MAX_BYTES:
+                    raise HTTPException(status_code=413, detail="File is too large (max 25 MB)")
+                buffer.write(chunk)
+    except BaseException:
+        Path(file_path).unlink(missing_ok=True)
+        raise
 
     return {"filename": safe_filename, "path": file_path}
 
@@ -408,6 +411,8 @@ def delete_page(
     db.query(MenuItem).filter(MenuItem.page_id == page_id).update({MenuItem.page_id: None})
     db.query(ContentItem).filter(ContentItem.page_id == page_id).delete()
     db.query(SEOMetadata).filter(SEOMetadata.page_id == page_id).delete()
+    # ревизии публикаций: без этого backref обнуляет page_id (NOT NULL) и удаление падает с 500
+    db.query(PageRevision).filter(PageRevision.page_id == page_id).delete()
     db.delete(page)
     db.commit()
     return {"message": "Page deleted"}

@@ -44,6 +44,8 @@ definePageMeta({
 
 useHead({ title: 'Настройки сайта - Sirius' })
 
+const { token } = useAuth()
+
 const config = useRuntimeConfig()
 const loading = ref(false)
 const error = ref('')
@@ -71,7 +73,7 @@ const saveSettings = async () => {
       await $fetch(`${config.public.apiBase}/api/admin/site-settings/${key}`, {
         method: 'PUT',
         headers: {
-          Authorization: `Bearer ${useCookie('access_token').value}`
+          Authorization: `Bearer ${token.value}`
         },
         body: { value: String(value) }
       })
