@@ -5,8 +5,8 @@
         <UBadge color="primary" variant="subtle" size="lg">Документация и справка</UBadge>
         <h1 class="display-title">Справка по веб-ТГИД</h1>
         <p class="lead">
-          Одна страница — одна функция: зачем она, где её найти, какие нужны права, шаги со снимками экрана,
-          короткое видео и что делать, если не получается.
+          Одна страница — одна функция: как она работает, что нужно для работы, шаги со снимками экрана,
+          примеры, видео и что делать, если не получается. Отдельно — для администратора и разработчика.
         </p>
 
         <form class="docs-search" role="search" @submit.prevent>
@@ -42,7 +42,7 @@
           <NuxtLink to="/contacts">напишите нам</NuxtLink>.
         </p>
         <div class="results">
-          <NuxtLink v-for="page in results" :key="page.id" :to="page.url" class="result card">
+          <NuxtLink v-for="page in results" :key="page.key" :to="page.url" class="result card">
             <span class="result-section">{{ sectionTitle(page.section) }}</span>
             <strong>{{ page.title }}</strong>
             <span>{{ page.summary }}</span>
@@ -57,12 +57,26 @@
           <span class="eyebrow">С чего начать</span>
           <h2 class="section-title">Первые шаги в системе</h2>
           <div class="start-grid">
-            <NuxtLink v-for="page in startPages" :key="page.id" :to="page.url" class="start-card card">
+            <NuxtLink v-for="page in startPages" :key="page.key" :to="page.url" class="start-card card">
               <img v-if="page.cover" :src="page.cover.src" :alt="page.cover.alt" :width="page.cover.width" :height="page.cover.height" loading="lazy" decoding="async">
               <div>
                 <strong>{{ page.title }}</strong>
                 <span>{{ page.summary }}</span>
               </div>
+            </NuxtLink>
+          </div>
+        </div>
+      </section>
+
+      <section v-if="journeyPages.length" class="section-tight">
+        <div class="container">
+          <span class="eyebrow">Сквозные сценарии</span>
+          <h2 class="section-title">Рабочая задача от начала до конца — за 2 минуты</h2>
+          <div class="journey-grid">
+            <NuxtLink v-for="page in journeyPages" :key="page.key" :to="page.url" class="journey-card card">
+              <UIcon name="i-lucide-circle-play" class="journey-play" />
+              <strong>{{ page.title }}</strong>
+              <span>{{ page.summary }}</span>
             </NuxtLink>
           </div>
         </div>
@@ -76,7 +90,7 @@
             <article v-for="section in sections" :key="section.id" class="section-card card card-pad">
               <NuxtLink :to="`/docs/${section.slug}`" class="section-card-head">
                 <div class="icon-box">
-                  <UIcon :name="productModuleBySection[section.id]?.icon || 'i-lucide-folder'" />
+                  <UIcon :name="docSectionIcon(section.id)" />
                 </div>
                 <div>
                   <h3>{{ section.title }}</h3>
@@ -144,7 +158,11 @@ const pageCount = computed(() => Object.keys(pages.value).length)
 const videoCount = computed(() => Object.values(pages.value).filter((page) => page.video).length)
 const searchIndex = useManualSearchIndex(computed(() => Boolean(query.value.trim())))
 const results = computed(() => searchManual(catalog.value, searchIndex.value, query.value))
-const startPages = computed(() => (sections.value[0]?.pageIds || []).map((id) => pages.value[id]))
+const pagesOf = (sectionId: string) => (sections.value.find((section) => section.id === sectionId)?.pageIds || [])
+  .map((key) => pages.value[key])
+  .filter((page) => Boolean(page))
+const startPages = computed(() => pagesOf('01-start').slice(0, 4))
+const journeyPages = computed(() => pagesOf('journeys'))
 const sectionTitle = (id: string) => sections.value.find((section) => section.id === id)?.title || ''
 
 const { data: troubles } = await useFetch('/docs-data/troubles', { key: 'docs-troubles' })
@@ -160,7 +178,7 @@ const plural = (n: number) => {
 
 useSEO({
   title: 'Документация и справка ТГИД — ПКФ «Сириус»',
-  description: 'Инструкция пользователя веб-ТГИД: карта сети, эксплуатация, расчёты, реестры, полевое приложение и функции ИИ — пошагово со снимками экрана и видео.'
+  description: 'Инструкция веб-ТГИД: карта сети, эксплуатация, расчёты, реестры, полевое приложение, функции ИИ, администрирование и API — пошагово со снимками экрана, примерами и видео.'
 })
 </script>
 
@@ -426,6 +444,41 @@ useSEO({
 
   .help-band {
     padding: 22px;
+  }
+}
+.journey-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 16px;
+  margin-top: 28px;
+}
+
+.journey-card {
+  display: grid;
+  align-content: start;
+  gap: 8px;
+  padding: 18px;
+}
+
+.journey-card strong {
+  color: var(--ink);
+}
+
+.journey-card span {
+  color: var(--muted);
+  font-size: 0.92rem;
+  line-height: 1.5;
+}
+
+.journey-play {
+  width: 28px;
+  height: 28px;
+  color: var(--accent);
+}
+
+@media (max-width: 900px) {
+  .journey-grid {
+    grid-template-columns: 1fr;
   }
 }
 </style>

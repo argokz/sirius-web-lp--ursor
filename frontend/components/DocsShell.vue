@@ -23,7 +23,7 @@
             class="docs-nav-section"
             :class="{ active: section.id === currentSection?.id }"
           >
-            <UIcon :name="productModuleBySection[section.id]?.icon || 'i-lucide-folder'" />
+            <UIcon :name="docSectionIcon(section.id)" />
             <span class="docs-nav-label">{{ section.title }}</span>
             <small>{{ section.pageIds.length }}</small>
           </NuxtLink>
@@ -61,7 +61,8 @@ const { data: catalog } = await useManualCatalog()
 const query = ref('')
 const navOpen = ref(false)
 const currentSection = computed(() => catalog.value?.sections.find((section) => section.slug === props.sectionSlug))
-const currentPageId = computed(() => props.pageId)
+/** Ключ открытой страницы «раздел/id»: id уникален только внутри раздела */
+const currentPageId = computed(() => (currentSection.value && props.pageId ? `${currentSection.value.id}/${props.pageId}` : null))
 
 watch(() => route.fullPath, () => {
   navOpen.value = false

@@ -51,3 +51,4 @@ coverage/
 # Справка из инструкции ТГИД: собирается npm run manual:sync перед сборкой
 frontend/public/manual/
 frontend/server/data/manual.json
+frontend/manual-media/

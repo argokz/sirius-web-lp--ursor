@@ -1,25 +1,60 @@
-// Переносит инструкцию веб-ТГИД (docs/manual репозитория tgid-app) в справку сайта:
-// тексты — в server/data/manual.json, снимки и видео — в public/manual/<раздел>/.
+// Переносит инструкцию веб-ТГИД (docs/manual репозитория web-itwin) в справку сайта:
+// тексты — в server/data/manual.json, снимки — в public/manual/<раздел>/img/,
+// ролики и субтитры — в manual-media/<раздел>/video/ (их отдаёт server/routes/docs-media с Range:
+// встроенная раздача public/ перематывать ролик не даёт).
+// Папка роликов на сервере — NUXT_MANUAL_MEDIA_DIR или manual-media в рабочей папке (frontend/).
 // Запуск: npm run manual:sync [-- <путь к docs/manual>] или MANUAL_SRC=<путь> npm run manual:sync
-import { promises as fs } from 'node:fs'
+//
+// Разделы и порядок страниц — из index.json инструкции (его собирает scripts/manual/pages.mjs).
+// id страницы уникален только внутри раздела (architecture есть и у администратора, и у разработчика),
+// поэтому ключ страницы в справке — «раздел/id».
+import { createHash } from 'node:crypto'
+import { promises as fs, readFileSync } from 'node:fs'
 import path from 'node:path'
 import { fileURLToPath } from 'node:url'
 import { marked } from 'marked'
 
 const here = path.dirname(fileURLToPath(import.meta.url))
 const frontendDir = path.resolve(here, '..')
-const sourceDir = path.resolve(
-  process.argv[2] || process.env.MANUAL_SRC || path.join(frontendDir, '../../tgid-app/web-itwin-v4/docs/manual')
-)
+const DEFAULT_SOURCE = 'H:/projects/tgid-app/web-itwin/docs/manual'
+const sourceDir = path.resolve(process.argv[2] || process.env.MANUAL_SRC || DEFAULT_SOURCE)
 const publicDir = path.join(frontendDir, 'public/manual')
+const mediaDir = path.join(frontendDir, 'manual-media')
 const dataFile = path.join(frontendDir, 'server/data/manual.json')
 
-const MEDIA_DIRS = ['img', 'video']
-const SEARCH_TEXT_LIMIT = 600
+/** Папка инструкции → куда копировать на сайте */
+const MEDIA_TARGETS = { img: publicDir, video: mediaDir }
+const SEARCH_TEXT_LIMIT = 1500
+/** Разделы страницы для администратора и разработчика: читателю-пользователю они свёрнуты */
+const LEVEL_SECTIONS = { 'Для администратора': 'admin', 'Для разработчика': 'dev' }
+/** «Возможности» — с этапа 1 инструкции, «Что умеет» — прежнее название */
+const ABILITY_SECTIONS = new Set(['Возможности', 'Что умеет'])
+/** Эти разделы страница показывает отдельными блоками, в тело они не попадают */
+const OWN_BLOCKS = new Set(['Видео', 'Связанные функции', 'Функции в ролике'])
 
 const sectionSlug = (sectionId) => sectionId.replace(/^\d+-/, '')
 const pageUrl = (sectionId, pageId) => `/docs/${sectionSlug(sectionId)}/${pageId}`
-const mediaUrl = (sectionId, rel) => `/manual/${sectionId}/${rel}`
+/** Ролики кешируются на неделю — в адрес добавляется версия по содержимому, чтобы переснятый ролик не застревал в кеше */
+const videoVersions = new Map()
+const videoVersion = (sectionId, rel) => {
+  const file = path.join(sourceDir, sectionId, rel)
+  if (!videoVersions.has(file)) {
+    let version = ''
+    try {
+      version = createHash('sha1').update(readFileSync(file)).digest('hex').slice(0, 10)
+    } catch {
+      // файла нет — о битой ссылке предупредит проверка ниже, адрес остаётся без версии
+    }
+    videoVersions.set(file, version)
+  }
+  return videoVersions.get(file)
+}
+const mediaUrl = (sectionId, rel) => {
+  if (!rel.startsWith('video/')) return `/manual/${sectionId}/${rel}`
+  const version = videoVersion(sectionId, rel)
+  return `/docs-media/${sectionId}/${rel}${version ? `?v=${version}` : ''}`
+}
+const keyOf = (sectionId, pageId) => `${sectionId}/${pageId}`
 
 const exists = async (file) => fs.access(file).then(() => true, () => false)
 
@@ -43,6 +78,9 @@ const slugifyHeading = (text, used) => {
   used.add(slug)
   return slug
 }
+
+/** «1:42» → 102 */
+const clockSeconds = (text) => text.split(':').reduce((sum, part) => sum * 60 + Number(part), 0)
 
 // Размер webp без сторонних библиотек: заголовки VP8X / VP8 / VP8L.
 const readWebpSize = async (file) => {
@@ -68,31 +106,23 @@ const readWebpSize = async (file) => {
   }
 }
 
-// Таблица «| [Функция](file.md) | Коротко |» из README раздела.
-const parseSummaryTable = (md) => {
-  const summaries = new Map()
-  for (const line of md.split('\n')) {
-    const match = line.match(/^\|\s*\[([^\]]+)]\(([^)]+)\.md\)\s*\|\s*(.+?)\s*\|\s*$/)
-    if (match) summaries.set(path.basename(match[2]), stripInline(match[3]))
-  }
-  return summaries
-}
-
-const parseRootSections = (md) => {
-  const rows = []
-  for (const line of md.split('\n')) {
-    const match = line.match(/^\|\s*(\d+)\s*\|\s*\[([^\]]+)]\(([^/]+)\/README\.md\)\s*\|\s*(.+?)\s*\|\s*$/)
-    if (match) rows.push({ id: match[3], title: stripInline(match[2]), contents: stripInline(match[4]) })
-  }
-  return rows
+/** Заголовок и первый абзац README раздела */
+const readSectionInfo = async (sectionId) => {
+  const md = (await fs.readFile(path.join(sourceDir, sectionId, 'README.md'), 'utf8')).replace(/\r\n/g, '\n')
+  const lines = md.split('\n')
+  const title = stripInline(lines.find((line) => line.startsWith('# '))?.slice(2) || sectionId)
+  const description = stripInline(lines.find((line) => line.trim() && !/^(#|\||\[|>)/.test(line)) || '')
+  return { title, description }
 }
 
 const copyMedia = async (sectionId) => {
   let copied = 0
-  for (const dir of MEDIA_DIRS) {
+  // ролики прежних синхронизаций лежали в public/ — убрать, чтобы не уезжали в сборку дважды
+  await fs.rm(path.join(publicDir, sectionId, 'video'), { recursive: true, force: true })
+  for (const [dir, targetRoot] of Object.entries(MEDIA_TARGETS)) {
     const from = path.join(sourceDir, sectionId, dir)
     if (!(await exists(from))) continue
-    const to = path.join(publicDir, sectionId, dir)
+    const to = path.join(targetRoot, sectionId, dir)
     await fs.mkdir(to, { recursive: true })
     for (const name of await fs.readdir(from)) {
       const src = path.join(from, name)
@@ -106,9 +136,38 @@ const copyMedia = async (sectionId) => {
   return copied
 }
 
-const convertPage = async ({ sectionId, pageId, md, idToSection, warnings }) => {
+/**
+ * Ссылка на страницу инструкции → ключ «раздел/id». Без раздела — та же папка; в README
+ * общего каталога ссылки идут от корня («03-operations/defect.md»).
+ */
+const resolveLink = (href, sectionId, keys) => {
+  const target = href.match(/^(?:(?:\.\.\/)?([^/]+)\/)?([^/]+)\.md$/)
+  if (!target) return null
+  const [, linkedSection, linkedId] = target
+  if (linkedId === 'README') return { readme: linkedSection || sectionId }
+  const key = keyOf(linkedSection || sectionId, linkedId)
+  return keys.has(key) ? { key } : { missing: key }
+}
+
+/** Разделы «Для администратора» / «Для разработчика» — в <details>: открытость задаёт страница по уровню читателя */
+const wrapLevelSections = (html) => {
+  const parts = html.split(/(?=<h2 id=")/)
+  return parts.map((part) => {
+    const head = part.match(/^<h2 id="([^"]+)">(.*?)<\/h2>/)
+    const level = head && LEVEL_SECTIONS[head[2].replace(/<[^>]+>/g, '')]
+    if (!level) return part
+    const rest = part.slice(head[0].length)
+    return `<details class="doc-level" data-level="${level}" id="${head[1]}"><summary><h2>${head[2]}</h2></summary>${rest}</details>`
+  }).join('')
+}
+
+const convertPage = async ({ entry, keys, warnings }) => {
+  const sectionId = entry.section
+  const pageId = entry.id
   const sectionDir = path.join(sourceDir, sectionId)
+  const md = await fs.readFile(path.join(sourceDir, entry.file), 'utf8')
   const lines = md.replace(/\r\n/g, '\n').split('\n')
+  const where = `${sectionId}/${pageId}`
 
   const titleLine = lines.findIndex((line) => line.startsWith('# '))
   const title = stripInline(lines[titleLine]?.slice(2) || pageId)
@@ -130,39 +189,47 @@ const convertPage = async ({ sectionId, pageId, md, idToSection, warnings }) => 
       continue
     }
     if (line.startsWith('## ')) currentH2 = line.slice(3).trim()
+    if (line.startsWith('[← ')) continue
 
     if (!currentH2 && !lead && line.trim() && !line.startsWith('#')) {
       lead = line.trim()
       continue
     }
-    if (currentH2 === 'Что умеет' && line.startsWith('- ')) abilities.push(stripInline(line.slice(2)))
+    if (ABILITY_SECTIONS.has(currentH2) && line.startsWith('- ')) abilities.push(stripInline(line.slice(2)))
     if (currentH2 === 'Если не получается' && line.startsWith('- ')) troubles.push(stripInline(line.slice(2)))
     if (currentH2 === 'Видео') {
       const src = line.match(/<video[^>]*src="([^"]+)"/)?.[1]
-      if (src && (await exists(path.join(sectionDir, src)))) video = mediaUrl(sectionId, src)
-      continue
-    }
-    if (currentH2 === 'Связанные функции') {
-      const link = line.match(/\]\(([^)]+)\.md\)/)?.[1]
-      if (link) {
-        const relId = path.basename(link)
-        if (idToSection.has(relId)) related.push(relId)
-        else warnings.push(`${sectionId}/${pageId}: связанная страница ${link} не найдена`)
+      if (src) {
+        if (await exists(path.join(sectionDir, src))) video = { src: mediaUrl(sectionId, src), track: null }
+        else warnings.push(`${where}: нет видео ${src}`)
+      }
+      const track = line.match(/<track[^>]*src="([^"]+)"/)?.[1]
+      if (track && video) {
+        if (await exists(path.join(sectionDir, track))) video.track = mediaUrl(sectionId, track)
+        else warnings.push(`${where}: нет субтитров ${track}`)
       }
       continue
     }
+    if (currentH2 === 'Связанные функции' || currentH2 === 'Функции в ролике') {
+      const link = line.match(/\]\(([^)]+\.md)\)/)?.[1]
+      if (link) {
+        const resolved = resolveLink(link, sectionId, keys)
+        if (resolved?.key) related.push(resolved.key)
+        else warnings.push(`${where}: связанная страница ${link} не найдена`)
+      }
+      continue
+    }
+    if (OWN_BLOCKS.has(currentH2)) continue
     body.push(line)
   }
 
-  // «Видео» и «Связанные функции» страница показывает отдельными блоками, в тело они не попадают.
   let bodyMd = body.join('\n')
 
   const images = []
-  const imageRefs = [...bodyMd.matchAll(/!\[([^\]]*)]\((img\/[^)\s]+)\)/g)]
-  for (const [whole, alt, rel] of imageRefs) {
+  for (const [whole, alt, rel] of [...bodyMd.matchAll(/!\[([^\]]*)]\((img\/[^)\s]+)\)/g)]) {
     const file = path.join(sectionDir, rel)
     if (!(await exists(file))) {
-      warnings.push(`${sectionId}/${pageId}: нет снимка ${rel}`)
+      warnings.push(`${where}: нет снимка ${rel}`)
       bodyMd = bodyMd.replace(whole, '')
       continue
     }
@@ -173,12 +240,15 @@ const convertPage = async ({ sectionId, pageId, md, idToSection, warnings }) => 
   bodyMd = bodyMd.replace(/\]\(([^)\s]+)\)/g, (whole, href) => {
     if (/^(https?:|mailto:|#)/.test(href)) return whole
     if (/^(img|video)\//.test(href)) return `](${mediaUrl(sectionId, href)})`
-    const target = href.match(/(?:\.\.\/([^/]+)\/)?([^/]+)\.md$/)
-    if (!target) return whole
-    const [, linkedSection, linkedId] = target
-    if (linkedId === 'README') return `](/docs${linkedSection ? `/${sectionSlug(linkedSection)}` : ''})`
-    const resolvedSection = linkedSection || idToSection.get(linkedId) || sectionId
-    return `](${pageUrl(resolvedSection, linkedId)})`
+    const resolved = resolveLink(href, sectionId, keys)
+    if (!resolved) return whole
+    if (resolved.readme) return `](/docs/${sectionSlug(resolved.readme)})`
+    if (resolved.missing) {
+      warnings.push(`${where}: ссылка на несуществующую страницу ${href}`)
+      return whole
+    }
+    const [linkedSection, linkedId] = resolved.key.split('/')
+    return `](${pageUrl(linkedSection, linkedId)})`
   })
 
   const imageBySrc = new Map(images.map((image) => [image.src, image]))
@@ -188,7 +258,7 @@ const convertPage = async ({ sectionId, pageId, md, idToSection, warnings }) => 
     .replace(/<h2>(.*?)<\/h2>/g, (whole, text) => {
       const plain = text.replace(/<[^>]+>/g, '')
       const id = slugifyHeading(plain, usedIds)
-      toc.push({ id, text: plain })
+      toc.push({ id, text: plain, level: LEVEL_SECTIONS[plain] || null })
       return `<h2 id="${id}">${text}</h2>`
     })
     .replace(/<img src="([^"]+)" alt="([^"]*)">/g, (whole, src, alt) => {
@@ -197,12 +267,17 @@ const convertPage = async ({ sectionId, pageId, md, idToSection, warnings }) => 
       return `<img src="${src}" alt="${alt}"${dims} loading="lazy" decoding="async">`
     })
     .replace(/<a href="(https?:[^"]+)"/g, '<a href="$1" target="_blank" rel="noopener noreferrer"')
+    // «Что в ролике»: метка времени перематывает ролик страницы
+    .replace(/<li><strong>(\d+:\d{2})<\/strong>/g, (whole, clock) =>
+      `<li><button type="button" class="doc-seek" data-seek="${clockSeconds(clock)}">${clock}</button>`)
+  html = wrapLevelSections(html)
 
   // Ссылки внутри «Где найти» и «Права» — обычный текст, разметку жирным оставляем.
   const metaHtml = (text) => marked.parseInline(escapeHtml(stripInline(text)), { async: false })
 
   const cover = images[1] || images[0] || null
   return {
+    key: keyOf(sectionId, pageId),
     id: pageId,
     section: sectionId,
     url: pageUrl(sectionId, pageId),
@@ -222,60 +297,59 @@ const convertPage = async ({ sectionId, pageId, md, idToSection, warnings }) => 
 }
 
 const main = async () => {
-  if (!(await exists(path.join(sourceDir, 'README.md')))) {
+  if (!(await exists(path.join(sourceDir, 'index.json')))) {
     throw new Error(`Не найдена инструкция: ${sourceDir}. Укажите путь аргументом или MANUAL_SRC.`)
   }
 
-  const rootMd = await fs.readFile(path.join(sourceDir, 'README.md'), 'utf8')
   const index = JSON.parse(await fs.readFile(path.join(sourceDir, 'index.json'), 'utf8'))
-  const rootSections = parseRootSections(rootMd)
   const warnings = []
 
-  const idToSection = new Map()
+  const keys = new Set()
   for (const entry of index) {
-    if (idToSection.has(entry.id)) throw new Error(`Повтор id страницы: ${entry.id}`)
-    idToSection.set(entry.id, entry.section)
+    const key = keyOf(entry.section, entry.id)
+    if (keys.has(key)) throw new Error(`Повтор страницы: ${key}`)
+    keys.add(key)
   }
+  /** Ролик сквозного сценария → ключ его страницы */
+  const journeyKey = (id) => keyOf('journeys', id)
 
+  const sectionIds = [...new Set(index.map((entry) => entry.section))]
   const sections = []
   const pages = {}
   let copied = 0
 
-  for (const root of rootSections) {
-    const readme = await fs.readFile(path.join(sourceDir, root.id, 'README.md'), 'utf8')
-    const description = stripInline(readme.split('\n').find((line, i, all) => i > 0 && line.trim() && !line.startsWith('#') && !line.startsWith('|')) || '')
-    const summaries = parseSummaryTable(readme)
-    const order = [...summaries.keys()]
-    const sectionPages = index
-      .filter((entry) => entry.section === root.id)
-      .sort((a, b) => {
-        const ia = order.indexOf(a.id)
-        const ib = order.indexOf(b.id)
-        return (ia === -1 ? 999 : ia) - (ib === -1 ? 999 : ib)
-      })
+  for (const sectionId of sectionIds) {
+    const info = await readSectionInfo(sectionId)
+    const sectionPages = index.filter((entry) => entry.section === sectionId)
 
     for (const entry of sectionPages) {
-      const md = await fs.readFile(path.join(sourceDir, entry.file), 'utf8')
-      const page = await convertPage({ sectionId: root.id, pageId: entry.id, md, idToSection, warnings })
-      page.summary = summaries.get(entry.id) || page.lead
+      const page = await convertPage({ entry, keys, warnings })
+      page.summary = entry.summary || page.lead
       page.keywords = entry.keywords || []
-      page.search = [page.title, page.summary, page.lead, ...page.abilities, ...page.keywords]
+      page.level = entry.level || ['user']
+      page.journeys = (entry.journeys || []).map(journeyKey).filter((key) => {
+        if (keys.has(key)) return true
+        warnings.push(`${page.key}: нет сквозного сценария ${key}`)
+        return false
+      })
+      page.search = [page.title, page.summary, page.lead, ...page.abilities, ...page.keywords, ...page.toc.map((item) => item.text)]
         .join(' ')
         .toLowerCase()
         .replace(/ё/g, 'е')
         .slice(0, SEARCH_TEXT_LIMIT)
-      pages[entry.id] = page
+      pages[page.key] = page
     }
 
-    copied += await copyMedia(root.id)
+    copied += await copyMedia(sectionId)
+    const num = sectionId.match(/^(\d+)-/)?.[1] || ''
     sections.push({
-      id: root.id,
-      slug: sectionSlug(root.id),
-      num: root.id.slice(0, 2),
-      title: root.title,
-      description,
-      contents: root.contents,
-      pageIds: sectionPages.map((entry) => entry.id)
+      id: sectionId,
+      slug: sectionSlug(sectionId),
+      num,
+      title: info.title,
+      description: info.description,
+      contents: sectionPages.slice(0, 6).map((entry) => entry.title).join(', '),
+      pageIds: sectionPages.map((entry) => keyOf(sectionId, entry.id))
     })
   }
 
@@ -287,6 +361,10 @@ const main = async () => {
   const stat = await fs.stat(dataFile)
   console.log(`Справка: ${sections.length} разделов, ${pageCount} страниц, ${Math.round(stat.size / 1024)} КБ; скопировано файлов: ${copied}`)
   for (const warning of warnings) console.warn(`  ! ${warning}`)
+  if (warnings.length && process.env.MANUAL_STRICT !== '0') {
+    console.error(`Предупреждений: ${warnings.length} — справка не должна уходить с битыми ссылками (MANUAL_STRICT=0 — пропустить)`)
+    process.exit(1)
+  }
 }
 
 main().catch((error) => {

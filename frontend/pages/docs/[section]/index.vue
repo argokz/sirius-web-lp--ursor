@@ -8,7 +8,7 @@
 
     <header class="section-head">
       <div class="icon-box">
-        <UIcon :name="module?.icon || 'i-lucide-folder'" />
+        <UIcon :name="docSectionIcon(section.id)" />
       </div>
       <div>
         <h1>{{ section.title }}</h1>
@@ -17,7 +17,7 @@
     </header>
 
     <div class="page-list">
-      <NuxtLink v-for="page in sectionPages" :key="page.id" :to="page.url" class="page-card card">
+      <NuxtLink v-for="page in sectionPages" :key="page.key" :to="page.url" class="page-card card">
         <div class="page-card-media">
           <img
             v-if="page.cover"
@@ -28,7 +28,7 @@
             loading="lazy"
             decoding="async"
           >
-          <UIcon v-else :name="module?.icon || 'i-lucide-file-text'" class="page-card-placeholder" />
+          <UIcon v-else :name="docSectionIcon(section.id, 'i-lucide-file-text')" class="page-card-placeholder" />
           <span v-if="page.video" class="video-badge"><UIcon name="i-lucide-play" /> Видео</span>
         </div>
         <div class="page-card-body">
@@ -51,7 +51,6 @@ if (!found) {
 }
 
 const section = computed(() => catalog.value!.sections.find((item) => item.slug === sectionSlug.value)!)
-const module = computed(() => productModuleBySection[section.value.id])
 const sectionPages = computed(() => section.value.pageIds.map((id) => catalog.value!.pages[id]))
 
 useSEO({

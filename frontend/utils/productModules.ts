@@ -110,3 +110,15 @@ export const productModules: ProductModule[] = [
 ]
 
 export const productModuleBySection = Object.fromEntries(productModules.map((module) => [module.section, module]))
+
+/** Разделы справки вне модулей продукта: основы, администрирование, разработчикам, сквозные ролики */
+const DOC_SECTION_ICONS: Record<string, string> = {
+  '00-basics': 'i-lucide-graduation-cap',
+  '13-administration': 'i-lucide-server-cog',
+  '14-developers': 'i-lucide-code-xml',
+  journeys: 'i-lucide-clapperboard'
+}
+
+/** Значок раздела справки: модуля продукта или служебного раздела */
+export const docSectionIcon = (sectionId: string, fallback = 'i-lucide-folder'): string =>
+  productModuleBySection[sectionId]?.icon || DOC_SECTION_ICONS[sectionId] || fallback

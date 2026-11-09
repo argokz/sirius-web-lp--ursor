@@ -23,16 +23,41 @@
         </dl>
 
         <figure v-if="data.page.video" class="doc-video">
-          <video :src="data.page.video" controls muted playsinline preload="metadata" />
-          <figcaption><UIcon name="i-lucide-play-circle" /> Короткое видео: как это выглядит в системе</figcaption>
+          <video ref="videoRef" :src="data.page.video.src" controls muted playsinline preload="metadata">
+            <track v-if="data.page.video.track" :src="data.page.video.track" kind="subtitles" srclang="ru" label="Русский" default>
+          </video>
+          <figcaption>
+            <UIcon name="i-lucide-play-circle" />
+            {{ isJourney ? 'Сквозной сценарий: шаги подписаны в кадре и субтитрами' : 'Короткое видео: как это выглядит в системе' }}
+          </figcaption>
         </figure>
 
-        <div ref="bodyRef" class="doc-body" @click="openImage" v-html="data.page.html" />
+        <div v-if="data.journeys.length" class="doc-journeys">
+          <UIcon name="i-lucide-clapperboard" />
+          <span>Функция показана в сквозном сценарии:</span>
+          <NuxtLink v-for="item in data.journeys" :key="item.key" :to="item.url">{{ item.title }}</NuxtLink>
+        </div>
+
+        <div v-if="hasLevelSections" class="doc-reader" role="group" aria-label="Для кого показывать подробности">
+          <span>Читаю как</span>
+          <button
+            v-for="option in READER_OPTIONS"
+            :key="option.value"
+            type="button"
+            :class="{ active: reader === option.value }"
+            :aria-pressed="reader === option.value"
+            @click="reader = option.value"
+          >
+            {{ option.label }}
+          </button>
+        </div>
+
+        <div ref="bodyRef" class="doc-body" @click="onBodyClick" @keydown="onBodyKeydown" v-html="data.page.html" />
 
         <section v-if="data.related.length" class="doc-related">
-          <h2>Связанные функции</h2>
+          <h2>{{ isJourney ? 'Функции в ролике' : 'Связанные функции' }}</h2>
           <div class="doc-related-grid">
-            <NuxtLink v-for="item in data.related" :key="item.id" :to="item.url" class="detail-card">
+            <NuxtLink v-for="item in data.related" :key="item.key" :to="item.url" class="detail-card">
               <strong>{{ item.title }}</strong>
               <span>{{ item.summary }}</span>
             </NuxtLink>
@@ -62,14 +87,14 @@
 
       <aside v-if="data.page.toc.length" class="doc-toc" aria-label="На этой странице">
         <span>На странице</span>
-        <a v-for="item in data.page.toc" :key="item.id" :href="`#${item.id}`">{{ item.text }}</a>
-        <a v-if="data.related.length" href="#" @click.prevent="scrollToRelated">Связанные функции</a>
+        <a v-for="item in data.page.toc" :key="item.id" :href="`#${item.id}`" @click="openLevel(item.id)">{{ item.text }}</a>
+        <a v-if="data.related.length" href="#" @click.prevent="scrollToRelated">{{ isJourney ? 'Функции в ролике' : 'Связанные функции' }}</a>
       </aside>
     </div>
 
-    <div v-if="zoomed" class="lightbox" role="dialog" aria-label="Снимок экрана" @click="zoomed = null">
+    <div v-if="zoomed" class="lightbox" role="dialog" aria-modal="true" aria-label="Снимок экрана" @click="closeZoom">
       <img :src="zoomed.src" :alt="zoomed.alt">
-      <button type="button" class="lightbox-close" aria-label="Закрыть"><UIcon name="i-lucide-x" /></button>
+      <button ref="closeRef" type="button" class="lightbox-close" aria-label="Закрыть" @click.stop="closeZoom"><UIcon name="i-lucide-x" /></button>
     </div>
   </DocsShell>
 </template>
@@ -85,17 +110,89 @@ if (error.value || !data.value) {
 }
 
 const bodyRef = ref<HTMLElement | null>(null)
+const videoRef = ref<HTMLVideoElement | null>(null)
 const zoomed = ref<{ src: string; alt: string } | null>(null)
+const closeRef = ref<HTMLButtonElement | null>(null)
+let zoomOpener: HTMLElement | null = null
+const isJourney = computed(() => data.value?.section.id === 'journeys')
 
-const openImage = (event: MouseEvent) => {
+const { reader, READER_OPTIONS, levelOpen } = useDocsReader()
+const hasLevelSections = computed(() => Boolean(data.value?.page.toc.some((item) => item.level)))
+
+/** Снимки в тексте открываются и с клавиатуры: фокус и роль кнопки */
+const prepareImages = () => {
+  bodyRef.value?.querySelectorAll<HTMLImageElement>('img').forEach((img) => {
+    img.tabIndex = 0
+    img.setAttribute('role', 'button')
+  })
+}
+
+/** Ссылка с якорем внутрь свёрнутого раздела (#dlya-administratora…) раскрывает его */
+const revealHash = () => {
+  const id = decodeURIComponent(route.hash.slice(1))
+  const target = id ? document.getElementById(id) : null
+  const details = target?.closest('details')
+  if (!target || !details || details.open) return
+  details.open = true
+  target.scrollIntoView()
+}
+
+/** Разделы «Для администратора» / «Для разработчика» открыты по выбору «Читаю как» */
+const syncLevelSections = () => {
+  bodyRef.value?.querySelectorAll<HTMLDetailsElement>('details.doc-level').forEach((details) => {
+    details.open = levelOpen(details.dataset.level)
+  })
+}
+const preparePage = () => {
+  syncLevelSections()
+  prepareImages()
+  revealHash()
+}
+watch(reader, syncLevelSections)
+watch(() => data.value?.page.key, () => nextTick(preparePage))
+watch(() => route.hash, revealHash)
+onMounted(preparePage)
+
+/** Переход из оглавления к свёрнутому разделу раскрывает его */
+const openLevel = (id: string) => {
+  const target = document.getElementById(id)
+  if (target instanceof HTMLDetailsElement) target.open = true
+}
+
+const onBodyClick = (event: MouseEvent) => {
   const target = event.target as HTMLElement
   if (target instanceof HTMLImageElement) {
-    zoomed.value = { src: target.src, alt: target.alt }
+    openZoom(target)
+    return
+  }
+  // «Что в ролике»: метка времени перематывает ролик
+  const seek = target.closest<HTMLElement>('.doc-seek')
+  if (seek && videoRef.value) {
+    videoRef.value.currentTime = Number(seek.dataset.seek) || 0
+    videoRef.value.scrollIntoView({ behavior: 'smooth', block: 'center' })
+    videoRef.value.play().catch(() => undefined)
   }
 }
 
+const onBodyKeydown = (event: KeyboardEvent) => {
+  if (!(event.target instanceof HTMLImageElement) || (event.key !== 'Enter' && event.key !== ' ')) return
+  event.preventDefault()
+  openZoom(event.target)
+}
+
+const openZoom = (img: HTMLImageElement) => {
+  zoomOpener = img
+  zoomed.value = { src: img.src, alt: img.alt }
+  nextTick(() => closeRef.value?.focus())
+}
+const closeZoom = () => {
+  zoomed.value = null
+  zoomOpener?.focus()
+  zoomOpener = null
+}
+
 const closeOnEscape = (event: KeyboardEvent) => {
-  if (event.key === 'Escape') zoomed.value = null
+  if (event.key === 'Escape' && zoomed.value) closeZoom()
 }
 onMounted(() => window.addEventListener('keydown', closeOnEscape))
 onUnmounted(() => window.removeEventListener('keydown', closeOnEscape))
@@ -520,5 +617,101 @@ useSEO({
     flex-direction: column;
     align-items: flex-start;
   }
+}
+.doc-journeys {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px 12px;
+  margin-top: 14px;
+  color: var(--muted);
+  font-size: 0.95rem;
+}
+
+.doc-journeys a {
+  color: var(--ink);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+.doc-journeys a:hover {
+  color: var(--accent);
+}
+
+.doc-reader {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px;
+  margin-top: 22px;
+  color: var(--muted);
+  font-size: 0.9rem;
+}
+
+.doc-reader button {
+  min-height: 36px;
+  padding: 4px 12px;
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  background: var(--surface);
+  color: var(--ink-2);
+  cursor: pointer;
+}
+
+.doc-reader button.active {
+  border-color: var(--ink);
+  background: var(--ink);
+  color: var(--paper);
+}
+
+.doc-body :deep(details.doc-level) {
+  margin-top: 40px;
+  border-top: 1px solid var(--line);
+  scroll-margin-top: 96px;
+}
+
+.doc-body :deep(details.doc-level > summary) {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  cursor: pointer;
+  list-style: none;
+}
+
+.doc-body :deep(details.doc-level > summary::-webkit-details-marker) {
+  display: none;
+}
+
+.doc-body :deep(details.doc-level > summary::after) {
+  content: '+';
+  margin-left: auto;
+  color: var(--muted);
+  font-size: 1.4rem;
+}
+
+.doc-body :deep(details.doc-level[open] > summary::after) {
+  content: '−';
+}
+
+.doc-body :deep(details.doc-level > summary h2) {
+  margin-top: 16px;
+}
+
+.doc-body :deep(.doc-seek) {
+  min-width: 52px;
+  margin-right: 6px;
+  padding: 2px 8px;
+  border: 1px solid var(--line-strong);
+  border-radius: var(--radius);
+  background: var(--surface);
+  color: var(--ink);
+  font-family: var(--mono);
+  font-size: 0.85rem;
+  cursor: pointer;
+}
+
+.doc-body :deep(.doc-seek:hover) {
+  border-color: var(--accent);
+  color: var(--accent);
 }
 </style>

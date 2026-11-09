@@ -36,7 +36,7 @@ export const searchManual = (
   return Object.values(catalog.pages)
     .map((page) => {
       const title = normalize(page.title)
-      const text = index?.[page.id] || `${title} ${normalize(page.summary)}`
+      const text = index?.[page.key] || `${title} ${normalize(page.summary)}`
       if (!words.every((word) => text.includes(word) || title.includes(word))) return null
       const score = words.reduce((sum, word) => sum + (title.includes(word) ? 3 : 0), 0)
       return { page, score }

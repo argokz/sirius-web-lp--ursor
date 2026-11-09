@@ -66,7 +66,7 @@
             <p class="lead">{{ module.text }}</p>
 
             <ul class="function-list">
-              <li v-for="(page, pageIndex) in pagesOf(module.section)" :key="page.id">
+              <li v-for="(page, pageIndex) in pagesOf(module.section)" :key="page.key">
                 <NuxtLink :to="page.url">
                   <span class="check">{{ String(pageIndex + 1).padStart(2, '0') }}</span>
                   <span>
@@ -128,8 +128,10 @@
 import type { ManualCatalog } from '~~/types/manual'
 import type { ProductModule } from '~/utils/productModules'
 
-const HERO_PAGE = 'hydraulic-thematic'
-const imagePages = new Set([HERO_PAGE, ...productModules.map((module) => module.showcase)])
+const HERO_PAGE = '05-analysis/hydraulic-thematic'
+/** Ключ страницы справки — «раздел/id» */
+const showcaseKey = (module: ProductModule) => `${module.section}/${module.showcase}`
+const imagePages = new Set([HERO_PAGE, ...productModules.map(showcaseKey)])
 
 // Снимки нужны только витринам модулей и первому экрану — остальное в данные страницы не кладём.
 const { data: catalog } = await useFetch('/docs-data/catalog', {
@@ -137,8 +139,8 @@ const { data: catalog } = await useFetch('/docs-data/catalog', {
   transform: (full: ManualCatalog) => ({
     sections: full.sections.map(({ id, pageIds }) => ({ id, pageIds })),
     pages: Object.fromEntries(Object.values(full.pages).map((page) => [
-      page.id,
-      { ...page, cover: imagePages.has(page.id) ? page.cover : null }
+      page.key,
+      { ...page, cover: imagePages.has(page.key) ? page.cover : null }
     ]))
   })
 })
@@ -153,7 +155,7 @@ const pagesOf = (sectionId: string) => {
 }
 
 const showcaseOf = (module: ProductModule) => {
-  const page = pages.value[module.showcase]
+  const page = pages.value[showcaseKey(module)]
   return page?.cover ? page : null
 }
 

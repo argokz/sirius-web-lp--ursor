@@ -20,7 +20,7 @@ export default defineNuxtConfig({
   ssr: true,
   routeRules: {
     '/**': { headers: securityHeaders },
-    // Снимки и видео справки меняются только вместе с инструкцией.
+    // Снимки справки меняются только вместе с инструкцией (ролики — server/routes/docs-media).
     '/manual/**': { headers: { ...securityHeaders, 'Cache-Control': 'public, max-age=604800' } }
   },
   modules: ['@pinia/nuxt', '@nuxt/image', '@nuxtjs/sitemap', '@nuxt/ui'],
@@ -44,6 +44,8 @@ export default defineNuxtConfig({
     ]
   },
   runtimeConfig: {
+    /** Ролики справки (scripts/sync-manual.mjs): NUXT_MANUAL_MEDIA_DIR, по умолчанию manual-media в рабочей папке */
+    manualMediaDir: '',
     public: {
       apiBase: process.env.API_BASE_URL || 'http://localhost:8009'
     }

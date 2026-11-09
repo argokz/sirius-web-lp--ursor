@@ -46,7 +46,7 @@
             </div>
           </header>
           <div class="function-list">
-            <NuxtLink v-for="page in pagesOf(module.section)" :key="page.id" :to="page.url" class="function-item">
+            <NuxtLink v-for="page in pagesOf(module.section)" :key="page.url" :to="page.url" class="function-item">
               <strong>
                 {{ page.title }}
                 <UIcon v-if="page.video" name="i-lucide-play-circle" class="video-mark" aria-label="есть видео" />
