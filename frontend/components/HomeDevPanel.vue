@@ -70,10 +70,11 @@ const SAMPLES = [
     lines: [
       { kind: 'cmd', text: 'curl https://<город>/api/v2/outages?status=active \\' },
       { kind: 'cmd', text: '  -H "Authorization: Bearer $TGID_KEY"' },
-      { kind: 'out', text: '{ "items": [ {' },
-      { kind: 'out', text: '    "id": 318, "kind": "аварийное",' },
-      { kind: 'out', text: '    "consumers": 37, "social": 2,' },
-      { kind: 'out', text: '    "valves": ["2КД-9", "2КД-12"] } ] }' }
+      { kind: 'out', text: '{ "data": [ {' },
+      { kind: 'out', text: '    "id": 318, "kind": "emergency", "status": "active",' },
+      { kind: 'out', text: '    "consumers_count": 37, "load_gcal_h": 4.2,' },
+      { kind: 'out', text: '    "valves_count": 4 } ],' },
+      { kind: 'out', text: '  "next_after_id": null }' }
     ]
   },
   {
@@ -83,10 +84,13 @@ const SAMPLES = [
     docTitle: 'Вебхуки: события и подпись',
     lines: [
       { kind: 'cmt', text: '# ТГИД присылает событие на ваш адрес' },
-      { kind: 'cmd', text: 'POST /tgid-hook   webhook-id: msg_2f…' },
+      { kind: 'cmd', text: 'POST /tgid-hook' },
+      { kind: 'cmd', text: 'webhook-id: evt_almaty_5121' },
+      { kind: 'cmd', text: 'webhook-timestamp: 1762674000' },
       { kind: 'cmd', text: 'webhook-signature: v1,K5o…   (Standard Webhooks)' },
       { kind: 'out', text: '{ "type": "defect.created",' },
-      { kind: 'out', text: '  "data": { "section": 1494, "kind": "порыв" } }' }
+      { kind: 'out', text: '  "data": { "defect_id": 5121, "line_id": 1494,' },
+      { kind: 'out', text: '            "category": "…" } }' }
     ]
   },
   {
@@ -98,8 +102,10 @@ const SAMPLES = [
       { kind: 'cmt', text: '# Claude Desktop, Cursor и другие клиенты MCP' },
       { kind: 'cmd', text: 'POST /mcp  {"method": "tools/call",' },
       { kind: 'cmd', text: '  "params": {"name": "select_network",' },
-      { kind: 'cmd', text: '   "arguments": {"question": "Ду 500 до 1980"}}}' },
-      { kind: 'out', text: '→ 12 участков · 3,8 км · ваши права' }
+      { kind: 'cmd', text: '   "arguments": {"conditions": [' },
+      { kind: 'cmd', text: '     {"field": "diameter", "op": "eq", "value": 500},' },
+      { kind: 'cmd', text: '     {"field": "year", "op": "lt", "value": 1980}]}}}' },
+      { kind: 'out', text: '→ участки по условиям · с правами владельца токена' }
     ]
   }
 ]
@@ -159,7 +165,7 @@ const side = (cx: number, cy: number, w: number, h: number) => {
 }
 
 .dev-iso text.dev-sub {
-  fill: #8b867a;
+  fill: var(--on-dark-subtle);
   font-family: var(--mono);
   font-size: 8.5px;
   letter-spacing: 0.05em;
@@ -203,7 +209,7 @@ const side = (cx: number, cy: number, w: number, h: number) => {
   padding: 10px 16px;
   border: 0;
   border-right: 1px solid rgba(246, 244, 238, 0.1);
-  color: #8b867a;
+  color: var(--on-dark-subtle);
   background: transparent;
   font-family: var(--mono);
   font-size: 0.74rem;
@@ -233,7 +239,7 @@ const side = (cx: number, cy: number, w: number, h: number) => {
 
 .dev-row.cmd { color: #f6f4ee; }
 .dev-row.out { color: #9fd7a8; }
-.dev-row.cmt { color: #8b867a; }
+.dev-row.cmt { color: var(--on-dark-subtle); }
 
 @keyframes dev-type {
   from { opacity: 0; transform: translateX(-8px); }

@@ -33,7 +33,22 @@
   --dark-2: #2a2924;
   --on-dark: #f6f4ee;
   --on-dark-muted: #bdb8aa;
+  /* Третий уровень текста на тёмном: подписи и метки, контраст ~6:1 на #1c1b18 и #23221e. */
+  --on-dark-subtle: #a19c8f;
   --line-dark: rgba(246, 244, 238, 0.14);
+
+  /*
+   * Макеты окон ТГИД говорят языком самого приложения (Vuetify): Roboto, синий primary,
+   * радиусы 12/8/6. Это не цвета сайта — только то, что внутри «экранов» программы.
+   */
+  --app-font: "Roboto", var(--font-sans);
+  --app-primary: #1565c0;
+  --app-success: #2e7d32;
+  --app-warning: #e65100;
+  --app-error: #b00020;
+  --app-text: rgba(0, 0, 0, 0.87);
+  --app-muted: rgba(0, 0, 0, 0.6);
+  --app-bg: #f4f4f5;
 
   --serif: var(--font-serif);
   --mono: var(--font-mono);
@@ -72,8 +87,25 @@
     color: var(--ink);
     background: var(--paper);
     font-family: var(--font-sans);
+    font-size: 16px;
+    line-height: 1.6;
+    font-feature-settings: "kern", "calt";
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
+  }
+
+  /* Абзацы без «сирот» в последней строке, заголовки — ровными строками. */
+  p,
+  li,
+  dd {
+    text-wrap: pretty;
+  }
+
+  h1,
+  h2,
+  h3 {
+    text-wrap: balance;
+    font-optical-sizing: auto;
   }
 
   ::selection {
@@ -144,6 +176,10 @@
   text-transform: uppercase;
 }
 
+/*
+ * Шкала шрифтов: заголовки — Source Serif 4 (крупно, плотно, без жирного), текст и подводки —
+ * Inter, служебные метки — JetBrains Mono заглавными. Числа везде одной ширины.
+ */
 .display-title {
   max-width: 940px;
   margin: 18px 0 0;
@@ -151,8 +187,8 @@
   font-family: var(--serif);
   font-size: clamp(2.5rem, 5.4vw, 4.4rem);
   font-weight: 400;
-  line-height: 1.04;
-  letter-spacing: -0.022em;
+  line-height: 1.02;
+  letter-spacing: -0.028em;
   text-wrap: balance;
 }
 
@@ -163,18 +199,25 @@
   font-family: var(--serif);
   font-size: clamp(1.9rem, 3.4vw, 2.9rem);
   font-weight: 400;
-  line-height: 1.1;
-  letter-spacing: -0.015em;
+  line-height: 1.08;
+  letter-spacing: -0.02em;
   text-wrap: balance;
 }
 
 .lead {
-  max-width: 700px;
+  max-width: 660px;
   margin: 22px 0 0;
   color: var(--ink-2);
-  font-family: var(--serif);
-  font-size: clamp(1.08rem, 1.5vw, 1.24rem);
-  line-height: 1.55;
+  font-family: var(--font-sans);
+  font-size: clamp(1.05rem, 1.35vw, 1.2rem);
+  line-height: 1.6;
+  letter-spacing: -0.006em;
+}
+
+.num,
+.stats,
+time {
+  font-variant-numeric: tabular-nums;
 }
 
 /* Номер пункта: «01» моноширинным шрифтом над тонкой линией. */
@@ -464,8 +507,17 @@ a.card:hover,
 }
 
 .dark-panel {
+  position: relative;
+  overflow: hidden;
   color: var(--on-dark);
   background: var(--dark);
+}
+
+/* Содержимое секций — над топографическим фоном (TopoBackdrop). */
+.hero > .container,
+.dark-panel > .container {
+  position: relative;
+  z-index: 1;
 }
 
 .dark-panel .section-title,

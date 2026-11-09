@@ -49,7 +49,9 @@ export default defineNuxtConfig({
     families: [
       { name: 'Inter', provider: 'google', global: true, weights: [400, 500, 600, 700] },
       { name: 'Source Serif 4', provider: 'google', global: true, weights: [400, 500], styles: ['normal', 'italic'] },
-      { name: 'JetBrains Mono', provider: 'google', global: true, weights: [400, 500] }
+      { name: 'JetBrains Mono', provider: 'google', global: true, weights: [400, 500] },
+      // Только для макетов окон ТГИД (как в самом приложении); грузится там, где встречается в CSS.
+      { name: 'Roboto', provider: 'google', weights: [400, 500], subsets: ['cyrillic', 'latin'] }
     ]
   },
   runtimeConfig: {

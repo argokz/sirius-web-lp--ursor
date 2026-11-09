@@ -107,7 +107,7 @@ onBeforeUnmount(() => {
   color: var(--on-dark-muted);
   background: var(--dark);
   font-family: var(--mono);
-  font-size: 0.68rem;
+  font-size: 0.7rem;
   letter-spacing: 0.06em;
   font-variant-numeric: tabular-nums;
   user-select: none;
@@ -145,7 +145,7 @@ onBeforeUnmount(() => {
 
 .hud-item b {
   margin-right: 8px;
-  color: #8b867a;
+  color: var(--on-dark-subtle);
   font-weight: 500;
 }
 

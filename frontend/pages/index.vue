@@ -2,17 +2,17 @@
   <div class="home">
     <!-- 1. Первый экран: обещание, кнопки, окно веб-ТГИД, которое рисуется само. -->
     <section class="hero">
+      <TopoBackdrop />
       <div class="container">
         <div class="hero-copy">
           <span v-reveal class="eyebrow">ТГИД-07 · электронная модель тепловой сети</span>
-          <h1 v-reveal="80" class="display-title hero-title">
-            Вся тепловая сеть города — <span class="marker">на одной живой карте</span>
+          <h1 class="display-title hero-title">
+            <SplitWords :parts="[{ t: 'Вся тепловая сеть города —' }, { t: 'на одной живой карте', cls: 'marker' }]" :delay="120" />
           </h1>
           <div v-reveal="160" class="hero-row">
             <p class="lead hero-lead">
-              Расчёт режима, аварии и отключения, наряды бригадам, износ и прогноз повреждений, помощник ИИ.
-              В браузере, на вашем сервере и в одной базе с десктопом ТГИД.
-            </p>
+            {{ typo('Расчёт режима, аварии и отключения, наряды бригадам, износ и прогноз повреждений, помощник ИИ. В браузере, на вашем сервере и в одной базе с десктопом ТГИД.') }}
+          </p>
             <div class="hero-actions">
               <UButton to="/demo" size="xl" color="primary" trailing-icon="i-lucide-arrow-right">
                 Запросить демо
@@ -25,7 +25,10 @@
         </div>
 
         <div v-reveal="240" class="hero-visual">
-          <ProductMapDemo />
+          <div class="hero-tilt">
+            <ProductMapDemo />
+            <HeroCursors />
+          </div>
           <span class="float-tag float-tag-a"><i class="tag-dot ok" />Расчёт фрагмента 74 · готов</span>
           <span class="float-tag float-tag-b">
             <span class="avatars"><i>АК</i><i>ДС</i><i>МЖ</i></span>
@@ -54,16 +57,17 @@
       <div class="container split-how">
         <div v-reveal>
           <span class="eyebrow">01 · Расчёт режима</span>
-          <h2 class="section-title">Посчитать режим — и сразу <em>понять</em>, что он значит</h2>
+          <h2 class="section-title">
+            <SplitWords :parts="[{ t: 'Посчитать режим — и сразу' }, { t: 'понять,', cls: 'em' }, { t: 'что он значит' }]" />
+          </h2>
           <p class="lead">
-            Движок heatnet считает гидравлику и тепло фрагмента сети: плановый режим, аварийный или по показаниям
-            телеметрии. Результат — на карте: стрелки потоков, цвет труб по потерям, пьезометр по любому маршруту.
+            {{ typo('Движок heatnet считает гидравлику и тепло фрагмента сети: плановый режим, аварийный или по показаниям телеметрии. Результат — на карте: стрелки потоков, цвет труб по потерям, пьезометр по любому маршруту.') }}
           </p>
           <ul class="link-list">
             <li v-for="item in CALC_LINKS" :key="item.to">
               <NuxtLink :to="item.to">
-                <span>{{ item.title }}</span>
-                <small>{{ item.text }}</small>
+                <span>{{ typo(item.title) }}</span>
+                <small>{{ typo(item.text) }}</small>
                 <UIcon name="i-lucide-arrow-right" />
               </NuxtLink>
             </li>
@@ -77,15 +81,15 @@
 
     <!-- 4. Помощник ИИ: вкладки сценариев на тёмном фоне. -->
     <section class="section dark-panel ai-section">
+      <TopoBackdrop tone="dark" />
       <div class="container">
         <div v-reveal class="section-head">
           <div>
             <span class="eyebrow">02 · Помощник ИИ</span>
-            <h2 class="section-title">Спросите сеть обычными словами</h2>
+            <h2 class="section-title"><SplitWords :parts="[{ t: 'Спросите сеть обычными словами' }]" /></h2>
           </div>
           <p class="lead">
-            Помощник сам ищет объекты, трассирует, локализует аварию и сравнивает сценарии — и показывает ответ на
-            карте. Он работает с вашими правами, а функции ИИ включаются флагом и вашим ключом.
+            {{ typo('Помощник сам ищет объекты, трассирует, локализует аварию и сравнивает сценарии — и показывает ответ на карте. Он работает с вашими правами, а функции ИИ включаются флагом и вашим ключом.') }}
           </p>
         </div>
         <HomeAiDemo v-reveal="100" />
@@ -98,11 +102,10 @@
         <div v-reveal class="section-head">
           <div>
             <span class="eyebrow">03 · Возможности</span>
-            <h2 class="section-title">От паспорта трубы до плана перекладок</h2>
+            <h2 class="section-title"><SplitWords :parts="[{ t: 'От паспорта трубы до плана перекладок' }]" /></h2>
           </div>
           <p class="lead">
-            Восемь направлений в одном окне. У каждого — страница справки с примерами, роликами и тем,
-            что делать, если что-то не получается.
+            {{ typo('Восемь направлений в одном окне. У каждого — страница справки с примерами, роликами и тем, что делать, если что-то не получается.') }}
           </p>
         </div>
         <div v-reveal.stagger class="cap-grid">
@@ -110,10 +113,42 @@
             <span class="cap-num">{{ String(i + 1).padStart(2, '0') }}</span>
             <UIcon :name="cap.icon" class="cap-icon" />
             <h3>{{ cap.title }}</h3>
-            <p>{{ cap.text }}</p>
+            <p>{{ typo(cap.text) }}</p>
             <span class="cap-more">В справке <UIcon name="i-lucide-arrow-right" /></span>
           </NuxtLink>
         </div>
+      </div>
+    </section>
+
+    <!-- 5а. Проверено на данных: три числа из сверок на сетях городов. -->
+    <section class="section rule-top">
+      <div class="container">
+        <div v-reveal class="section-head">
+          <div>
+            <span class="eyebrow">04 · Проверено на данных</span>
+            <h2 class="section-title"><SplitWords :parts="[{ t: 'Числа, которые' }, { t: 'можно проверить', cls: 'em' }]" /></h2>
+          </div>
+          <p class="lead">
+            {{ typo('Расчёты и прогнозы ТГИД сверяются с журналами повреждений и эталонными расчётами на настоящих сетях городов. Вот три таких сверки.') }}
+          </p>
+        </div>
+        <HomeProof />
+      </div>
+    </section>
+
+    <!-- 5б. Авария одним процессом: шаги загораются по очереди вдоль пары труб. -->
+    <section class="section rule-top">
+      <div class="container">
+        <div v-reveal class="section-head">
+          <div>
+            <span class="eyebrow">05 · Аварии и отключения</span>
+            <h2 class="section-title"><SplitWords :parts="[{ t: 'Авария — от сигнала' }, { t: 'до включения', cls: 'em' }]" /></h2>
+          </div>
+          <p class="lead">
+            {{ typo('Каждый шаг — в одной системе: диспетчер, бригада, жители и внешние системы видят одно и то же, а журнал помнит, кто и когда что сделал.') }}
+          </p>
+        </div>
+        <HomeOutagePath />
       </div>
     </section>
 
@@ -121,15 +156,14 @@
     <section class="section field-section">
       <div class="container split-how">
         <div v-reveal>
-          <span class="eyebrow">04 · Полевое приложение</span>
-          <h2 class="section-title">Бригада работает и там, где нет связи</h2>
+          <span class="eyebrow">06 · Полевое приложение</span>
+          <h2 class="section-title"><SplitWords :parts="[{ t: 'Бригада работает и там, где нет связи' }]" /></h2>
           <p class="lead">
-            Наряды, обходы по формам, дефекты с фото и трек — в телефоне. Без связи всё копится в очереди
-            и уходит на сервер, как только сеть появится. Диспетчер видит, что бригада на месте.
+            {{ typo('Наряды, обходы по формам, дефекты с фото и трек — в телефоне. Без связи всё копится в очереди и уходит на сервер, как только сеть появится. Диспетчер видит, что бригада на месте.') }}
           </p>
           <ol class="steps">
             <li v-for="(step, i) in FIELD_STEPS" :key="step">
-              <span>{{ String(i + 1).padStart(2, '0') }}</span>{{ step }}
+              <span>{{ String(i + 1).padStart(2, '0') }}</span>{{ typo(step) }}
             </li>
           </ol>
           <NuxtLink to="/docs/field-public/field-app" class="text-link">
@@ -147,21 +181,21 @@
       <div class="container">
         <div v-reveal class="section-head">
           <div>
-            <span class="eyebrow">05 · Данные и связи</span>
-            <h2 class="section-title">Встаёт в то, что у вас уже есть</h2>
+            <span class="eyebrow">07 · Данные и связи</span>
+            <h2 class="section-title"><SplitWords :parts="[{ t: 'Встаёт в то, что у вас уже есть' }]" /></h2>
           </div>
           <p class="lead">
-            Одна база с десктопом ТГИД, импорт из ZuluGIS и файлов, стандартные протоколы ГИС
-            и телеметрии. Данные не нужно переписывать вручную.
+            {{ typo('Одна база с десктопом ТГИД, импорт из ZuluGIS и файлов, стандартные протоколы ГИС и телеметрии. Данные не нужно переписывать вручную.') }}
           </p>
         </div>
+        <HomeDataFlow />
         <ul v-reveal.stagger class="int-list">
           <li v-for="item in INTEGRATIONS" :key="item.title">
             <component :is="item.to ? NuxtLinkComponent : 'div'" :to="item.to || undefined" class="int-item">
               <UIcon :name="item.icon" class="int-icon" />
               <span class="int-text">
-                <strong>{{ item.title }}</strong>
-                <small>{{ item.text }}</small>
+                <strong>{{ typo(item.title) }}</strong>
+                <small>{{ typo(item.text) }}</small>
               </span>
               <span class="int-tag">{{ item.tag }}</span>
             </component>
@@ -172,15 +206,15 @@
 
     <!-- 8. Разработчикам. -->
     <section class="section dark-panel">
+      <TopoBackdrop tone="dark" />
       <div class="container">
         <div v-reveal class="section-head">
           <div>
-            <span class="eyebrow">06 · Разработчикам</span>
-            <h2 class="section-title">Открытый API вместо выгрузок по почте</h2>
+            <span class="eyebrow">08 · Разработчикам</span>
+            <h2 class="section-title"><SplitWords :parts="[{ t: 'Открытый API вместо выгрузок по почте' }]" /></h2>
           </div>
           <p class="lead">
-            API v2 для 1С, ERP и SCADA, вебхуки с подписью, OGC API и ArcGIS FeatureServer для ГИС,
-            MCP для ИИ-клиентов и встраиваемая карта для сайта города.
+            {{ typo('API v2 для 1С, ERP и SCADA, вебхуки с подписью, OGC API и ArcGIS FeatureServer (только чтение) для ГИС, MCP для ИИ-клиентов и встраиваемая карта для сайта города.') }}
           </p>
         </div>
         <HomeDevPanel v-reveal="100" />
@@ -192,19 +226,18 @@
       <div class="container">
         <div v-reveal class="section-head">
           <div>
-            <span class="eyebrow">07 · Справка и обучение</span>
-            <h2 class="section-title">Каждая функция описана, показана и проверена</h2>
+            <span class="eyebrow">09 · Справка и обучение</span>
+            <h2 class="section-title"><SplitWords :parts="[{ t: 'Каждая функция описана, показана и проверена' }]" /></h2>
           </div>
           <p class="lead">
-            Справка написана по живой системе: у страниц есть снимки, ролики и раздел «если не работает».
-            Курс ведёт каждую роль от первого входа до итогового теста.
+            {{ typo('Справка написана по живой системе: у страниц есть снимки, ролики и раздел «если не работает». Курс ведёт каждую роль от первого входа до итогового теста.') }}
           </p>
         </div>
 
         <div ref="statsEl" v-reveal.stagger class="stats">
           <div v-for="stat in statItems" :key="stat.label" class="stat">
             <span class="stat-value">{{ shown[stat.key] ?? stat.value }}</span>
-            <span class="stat-label">{{ stat.label }}</span>
+            <span class="stat-label">{{ typo(stat.label) }}</span>
           </div>
         </div>
 
@@ -245,15 +278,15 @@
       <div class="container">
         <div v-reveal class="section-head">
           <div>
-            <span class="eyebrow">08 · Безопасность</span>
-            <h2 class="section-title">Данные сети остаются вашими</h2>
+            <span class="eyebrow">10 · Безопасность</span>
+            <h2 class="section-title"><SplitWords :parts="[{ t: 'Данные сети остаются вашими' }]" /></h2>
           </div>
         </div>
         <div v-reveal.stagger class="sec-grid">
           <NuxtLink v-for="(item, i) in SECURITY" :key="item.title" :to="item.to" class="sec-item">
             <span class="index-label">{{ String(i + 1).padStart(2, '0') }}</span>
-            <h3>{{ item.title }}</h3>
-            <p>{{ item.text }}</p>
+            <h3>{{ typo(item.title) }}</h3>
+            <p>{{ typo(item.text) }}</p>
           </NuxtLink>
         </div>
       </div>
@@ -264,17 +297,17 @@
       <div class="container faq-wrap">
         <div v-reveal>
           <span class="eyebrow">Вопросы</span>
-          <h2 class="section-title">Что обычно спрашивают</h2>
+          <h2 class="section-title"><SplitWords :parts="[{ t: 'Что обычно спрашивают' }]" /></h2>
           <p class="lead">Не нашли ответа — нажмите <kbd>Ctrl K</kbd> и поищите в справке или напишите нам.</p>
         </div>
         <div v-reveal="100" class="faq">
           <details v-for="(item, i) in FAQ" :key="item.q" class="faq-item">
             <summary>
               <span class="faq-num">{{ String(i + 1).padStart(2, '0') }}</span>
-              {{ item.q }}
+              {{ typo(item.q) }}
               <UIcon name="i-lucide-plus" class="faq-icon" />
             </summary>
-            <p>{{ item.a }}</p>
+            <p>{{ typo(item.a) }}</p>
           </details>
         </div>
       </div>
@@ -286,10 +319,9 @@
         <div v-reveal class="cta">
           <div class="cta-grid" aria-hidden="true" />
           <span class="eyebrow">Демонстрация</span>
-          <h2 class="section-title">Покажем ТГИД на сети вашего города</h2>
+          <h2 class="section-title"><SplitWords :parts="[{ t: 'Покажем ТГИД на сети вашего города' }]" /></h2>
           <p class="lead">
-            Расчёт режима, локализация аварии, наряд бригаде и помощник ИИ — за одну встречу.
-            Расскажем, что понадобится для запуска.
+            {{ typo('Расчёт режима, локализация аварии, наряд бригаде и помощник ИИ — за одну встречу. Расскажем, что понадобится для запуска.') }}
           </p>
           <div class="hero-actions">
             <UButton to="/demo" size="xl" color="neutral" variant="solid" class="cta-primary" trailing-icon="i-lucide-arrow-right">
@@ -348,7 +380,7 @@ const CAPABILITIES = [
   { icon: 'i-lucide-clipboard-list', title: 'Наряды и обходы', text: 'От заявки или дефекта до закрытия: бригада, сроки, формы осмотра, журналы шурфовок, опрессовок и ремонтов.', to: '/docs/operations/work-orders' },
   { icon: 'i-lucide-trending-up', title: 'Износ и прогноз аварийности', text: 'Индекс износа по методике ТГИД, вероятность повреждения на два года, план перекладок с запиской ИИ.', to: '/docs/analysis/failure-forecast' },
   { icon: 'i-lucide-radio-tower', title: 'Телеметрия', text: 'Датчики и ОДПУ против расчёта, тревоги, баланс расхода, прогноз нагрузки на сутки по погоде.', to: '/docs/other-networks/telemetry' },
-  { icon: 'i-lucide-droplets', title: 'Водопровод и другие сети', text: 'Модели EPANET, зоны водоучёта и утечки, электросеть, сближения коммуникаций и раскопки.', to: '/docs/water/water' }
+  { icon: 'i-lucide-droplets', title: 'Водопровод и другие сети', text: 'Модели EPANET, зоны водоучёта и утечки, журнал и сверка электросети, сближения коммуникаций и раскопки.', to: '/docs/water/water' }
 ]
 
 const FIELD_STEPS = [
@@ -360,12 +392,12 @@ const FIELD_STEPS = [
 
 const INTEGRATIONS = [
   { icon: 'i-lucide-monitor', title: 'Десктоп ТГИД', text: 'Одна база города, правки видны в обоих', tag: 'Одна база', to: '/docs/administration/architecture' },
-  { icon: 'i-lucide-import', title: 'ZuluGIS', text: 'Перенос сети с пересчётом координат', tag: 'Импорт', to: '' },
+  { icon: 'i-lucide-import', title: 'ZuluGIS', text: 'Перенос сети с пересчётом координат', tag: 'Импорт', to: '/docs/source-data/fragment-transfer' },
   { icon: 'i-lucide-database', title: 'PostgreSQL · PostGIS', text: 'База города на вашем сервере', tag: 'База', to: '/docs/administration/backups' },
   { icon: 'i-lucide-sheet', title: 'Excel', text: 'Ведомости по шаблонам, импорт с подбором колонок', tag: 'Отчёты', to: '/docs/journeys/reports' },
   { icon: 'i-lucide-layers', title: 'GeoPackage · Shapefile · FlatGeobuf', text: 'Обмен слоями с ГИС', tag: 'ГИС', to: '/docs/source-data/network-import' },
   { icon: 'i-lucide-globe', title: 'OGC API — Features и Processes', text: 'Слои сети по стандарту, GeoJSON в WGS 84', tag: 'Стандарт', to: '/docs/developers/ogc' },
-  { icon: 'i-lucide-map-pinned', title: 'ArcGIS FeatureServer', text: 'Слои для ArcGIS и QGIS по GeoServices REST', tag: 'GeoServices', to: '/docs/developers/arcgis' },
+  { icon: 'i-lucide-map-pinned', title: 'ArcGIS FeatureServer', text: 'Слои для ArcGIS и QGIS по GeoServices REST, только чтение', tag: 'GeoServices', to: '/docs/developers/arcgis' },
   { icon: 'i-lucide-cpu', title: 'OPC UA · SCADA · ОДПУ', text: 'Показания датчиков против модели', tag: 'Телеметрия', to: '/docs/other-networks/telemetry' },
   { icon: 'i-lucide-waves', title: 'EPANET', text: 'Расчёт водопровода по часам', tag: 'Водопровод', to: '/docs/water/water' },
   { icon: 'i-lucide-cloud-sun', title: 'Open-Meteo', text: 'Прогноз нагрузки источников на сутки', tag: 'Погода', to: '/docs/other-networks/telemetry-forecast' },
@@ -375,16 +407,16 @@ const INTEGRATIONS = [
 
 const SECURITY = [
   { title: 'Права по ролям', text: 'Матрица видов и действий, роли-шаблоны, правка «только своих» объектов и журнал действий каждого пользователя.', to: '/docs/administration/roles-rights' },
-  { title: 'Персональные данные под маской', text: 'ФИО и адреса абонентов видят только те, кому выдано право. Остальным API отдаёт их скрытыми.', to: '/docs/administration/personal-data' },
+  { title: 'Персональные данные под маской', text: 'ФИО, телефоны, ИИН и лицевые счета абонентов полностью видят только те, кому выдано право; остальным API отдаёт их замаскированными.', to: '/docs/administration/personal-data' },
   { title: 'Ваш сервер', text: 'Система ставится в вашей сети, резервные копии — по расписанию. Функции ИИ необязательны: без ключа всё остальное работает.', to: '/docs/administration/architecture' }
 ]
 
 const FAQ = [
   { q: 'Нужно ли отказываться от десктопа ТГИД?', a: 'Нет. Веб и десктоп работают в одной базе города: правка в одном видна в другом, номера объектов не меняются. Переходить можно постепенно, по службам.' },
   { q: 'Можно ли перенести сеть из ZuluGIS?', a: 'Да. Конвертер переносит сеть ZuluGIS в базу ТГИД с пересчётом координат, ход переноса виден в приложении. Слои SHP, Excel и координаты загружаются импортом.' },
-  { q: 'Насколько можно доверять расчёту?', a: 'Движок heatnet сверяется с эталонными расчётами прежнего движка на сетях Алматы и Астаны. Протокол показывает каждую ошибку и предупреждение с переходом к объекту, а помощник ИИ объясняет их словами.' },
+  { q: 'Насколько можно доверять расчёту?', a: 'Движок heatnet сверен с эталонными расчётами прежнего движка на сетях Алматы, Астаны и Шатуры; найденные ошибки старого движка исправлены и описаны. Протокол показывает каждую ошибку и предупреждение с переходом к объекту, а помощник ИИ объясняет их словами.' },
   { q: 'Сколько времени займёт обучение?', a: 'Трек «Новичок» — 8 уроков, около четырёх часов. У режимщика, редактора сети, диспетчера, администратора и разработчика свои треки с практикой на стенде и итоговым тестом.' },
-  { q: 'Можно ли вести несколько городов?', a: 'Да. Один сервер обслуживает несколько городов: у каждого своя база, свой адрес и свои пользователи, переход между городами — из меню пользователя.' },
+  { q: 'Можно ли вести несколько городов?', a: 'Да. Один сервер обслуживает несколько городов: у каждого своя база и свой адрес, доступ к городам задаётся пользователю, переход — из меню пользователя.' },
   { q: 'Обязателен ли ИИ?', a: 'Нет. Функции ИИ включаются отдельно и работают с вашим ключом. Без них доступны все расчёты, журналы, карта и отчёты.' },
   { q: 'Как устроен доступ для внешних систем?', a: 'API v2 с ключом для 1С, ERP и SCADA, вебхуки с подписью Standard Webhooks, OGC API и ArcGIS FeatureServer для ГИС, MCP для ИИ-клиентов. Всё описано в разделе справки «Разработчикам».' }
 ]
@@ -446,9 +478,11 @@ onBeforeUnmount(() => statsObserver?.disconnect())
 
 /* Первый экран */
 .hero {
+  position: relative;
+  overflow: hidden;
   padding: 148px 0 72px;
   background:
-    radial-gradient(circle at 1px 1px, rgba(28, 27, 24, 0.09) 1px, transparent 0) 0 0 / 22px 22px,
+    radial-gradient(circle at 1px 1px, rgba(28, 27, 24, 0.06) 1px, transparent 0) 0 0 / 22px 22px,
     var(--paper);
 }
 
@@ -564,7 +598,7 @@ onBeforeUnmount(() => statsObserver?.disconnect())
   flex: 0 0 auto;
   color: var(--muted);
   font-family: var(--mono);
-  font-size: 0.68rem;
+  font-size: 0.72rem;
   letter-spacing: 0.08em;
   text-transform: uppercase;
 }
@@ -616,13 +650,35 @@ onBeforeUnmount(() => statsObserver?.disconnect())
   margin: 0;
 }
 
-.section-title em {
+.section-title em,
+.section-title :deep(.em) {
   font-style: italic;
   color: var(--accent);
 }
 
-.dark-panel .section-title em {
+.dark-panel .section-title :deep(.em) {
   color: #ff6b5e;
+}
+
+/* Окно программы наклонено «к столу» и выпрямляется при прокрутке (где браузер умеет scroll-timeline). */
+.hero-tilt {
+  position: relative;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  @supports (animation-timeline: view()) {
+    .hero-tilt {
+      transform-origin: 50% 0;
+      animation: hero-tilt linear both;
+      animation-timeline: view();
+      animation-range: entry 0% cover 45%;
+    }
+  }
+}
+
+@keyframes hero-tilt {
+  from { transform: perspective(1800px) rotateX(14deg) scale(0.94); }
+  to { transform: none; }
 }
 
 .split-how {
@@ -795,7 +851,7 @@ onBeforeUnmount(() => statsObserver?.disconnect())
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
   column-gap: 48px;
-  margin: 0;
+  margin: 48px 0 0;
   padding: 0;
   list-style: none;
   border-top: 1px solid var(--ink);
@@ -844,7 +900,7 @@ a.int-item:hover .int-text strong {
   border-radius: 999px;
   color: var(--muted);
   font-family: var(--mono);
-  font-size: 0.64rem;
+  font-size: 0.68rem;
   letter-spacing: 0.06em;
   text-transform: uppercase;
   white-space: nowrap;
