@@ -146,6 +146,7 @@
     </section>
     </div>
     <template #append>
+      <JourneyShowcase />
       <ProductCapabilities />
     </template>
   </CmsPageRenderer>

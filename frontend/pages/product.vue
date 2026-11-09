@@ -63,6 +63,7 @@
     </section>
     </PageShell>
     <template #append>
+      <JourneyShowcase />
       <ProductCapabilities />
     </template>
   </CmsPageRenderer>

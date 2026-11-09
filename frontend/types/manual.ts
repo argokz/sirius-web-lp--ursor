@@ -77,3 +77,8 @@ export interface ManualPageResponse {
   prev: ManualPageCard | null
   next: ManualPageCard | null
 }
+
+export interface ManualJourneys {
+  featured: { key: string; title: string; summary: string; url: string; video: ManualVideo } | null
+  items: ManualPageCard[]
+}

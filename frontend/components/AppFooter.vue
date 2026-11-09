@@ -57,7 +57,9 @@ const productLinks = [
   { title: 'Моделирование', to: '/modeling' },
   { title: 'ГИС', to: '/gis' },
   { title: 'Эксплуатация', to: '/maintenance' },
-  { title: 'Web-версия', to: '/web-version' }
+  { title: 'Web-версия', to: '/web-version' },
+  { title: 'Документация', to: '/docs' },
+  { title: 'Обучение', to: '/learn' }
 ]
 
 const companyLinks = [

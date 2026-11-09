@@ -77,6 +77,15 @@
                 </NuxtLink>
               </li>
             </ul>
+
+            <div class="module-links">
+              <NuxtLink :to="`/docs/${slugOf(module.section)}`">
+                <UIcon name="i-lucide-book-open" /> Весь раздел справки
+              </NuxtLink>
+              <NuxtLink v-for="lesson in lessonsOf(module.section)" :key="lesson.id" :to="lesson.url">
+                <UIcon name="i-lucide-graduation-cap" /> Урок: {{ lesson.title }}
+              </NuxtLink>
+            </div>
           </div>
 
           <figure v-if="showcaseOf(module)" class="module-shot">
@@ -97,6 +106,23 @@
           </figure>
         </div>
       </section>
+
+      <section class="section-tight">
+        <div class="container">
+          <span class="eyebrow">Для тех, кто внедряет и сопровождает</span>
+          <h2 class="section-title">Основы, администрирование, разработка</h2>
+          <div class="extra-grid">
+            <NuxtLink v-for="extra in EXTRA_SECTIONS" :key="extra.id" :to="`/docs/${slugOf(extra.id)}`" class="extra-card card">
+              <UIcon :name="docSectionIcon(extra.id)" class="extra-icon" />
+              <strong>{{ extra.title }}</strong>
+              <span>{{ extra.text }}</span>
+              <small>{{ pagesOf(extra.id).length }} страниц справки</small>
+            </NuxtLink>
+          </div>
+        </div>
+      </section>
+
+      <JourneyShowcase heading="Сквозные сценарии в роликах" />
 
       <section class="section-tight">
         <div class="container">
@@ -125,6 +151,7 @@
 </template>
 
 <script setup lang="ts">
+import type { CourseCatalog } from '~~/types/course'
 import type { ManualCatalog } from '~~/types/manual'
 import type { ProductModule } from '~/utils/productModules'
 
@@ -161,9 +188,34 @@ const showcaseOf = (module: ProductModule) => {
 
 const heroImage = computed(() => pages.value[HERO_PAGE]?.cover)
 
+/** Разделы справки вне модулей продукта — карточками под модулями */
+const EXTRA_SECTIONS = [
+  { id: '00-basics', title: 'Основы', text: 'Как устроен расчёт: гидравлическая модель, нагрузки, тепловой расчёт, движок heatnet и отличия от десктопа.' },
+  { id: '13-administration', title: 'Администрирование системы', text: 'Архитектура, города, движки, переменные окружения, резервные копии, мониторинг, права и ПДн.' },
+  { id: '14-developers', title: 'Разработчикам', text: 'API v1 и v2, вебхуки, MCP, OGC и ArcGIS, тайлы, встраивание карты, тесты.' }
+]
+
+// Уроки курса к модулю: те, что ссылаются на страницы его раздела справки (без текстов — только ссылки)
+const { data: courseLessons } = await useFetch('/docs-data/course/catalog', {
+  key: 'course-features',
+  transform: (course: CourseCatalog) => Object.values(course.lessons)
+    .filter((lesson) => lesson.kind === 'lesson')
+    .map(({ id, title, url, sections }) => ({ id, title, url, sections }))
+})
+const MAX_MODULE_LESSONS = 2
+const lessonsOf = (sectionId: string) => {
+  const lessons = courseLessons.value || []
+  // сначала уроки, для которых раздел — главный (первая ссылка урока), затем остальные
+  return [
+    ...lessons.filter((lesson) => lesson.sections[0] === sectionId),
+    ...lessons.filter((lesson) => lesson.sections[0] !== sectionId && lesson.sections.includes(sectionId))
+  ].slice(0, MAX_MODULE_LESSONS)
+}
+
 const stats = computed(() => [
   { value: totalPages.value, label: 'функций с инструкциями' },
   { value: productModules.length, label: 'модулей платформы' },
+  { value: courseLessons.value?.length || 0, label: 'уроков в курсе с тестами' },
   { value: pagesOf('10-ai').length, label: 'функций ИИ' },
   { value: Object.values(pages.value).filter((page) => page.video).length, label: 'видеоинструкций' },
   { value: 3, label: 'языка интерфейса: ru, kk, en' }
@@ -200,7 +252,74 @@ useSEO({
 
 .stats-grid {
   display: grid;
-  grid-template-columns: repeat(5, minmax(0, 1fr));
+  grid-template-columns: repeat(6, minmax(0, 1fr));
+}
+
+.module-links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px 18px;
+  margin-top: 18px;
+  font-size: 0.92rem;
+}
+
+.module-links a {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  color: var(--ink);
+  text-decoration: underline;
+  text-decoration-color: var(--line-strong);
+  text-underline-offset: 3px;
+}
+
+.module-links a:hover {
+  text-decoration-color: var(--ink);
+}
+
+.extra-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 18px;
+  margin-top: 24px;
+}
+
+.extra-card {
+  display: grid;
+  gap: 8px;
+  padding: 22px;
+  transition: transform 0.2s ease;
+}
+
+.extra-card:hover {
+  transform: translateY(-2px);
+}
+
+.extra-icon {
+  width: 26px;
+  height: 26px;
+  color: var(--sirius-red);
+}
+
+.extra-card strong {
+  font-size: 1.1rem;
+  color: var(--ink);
+}
+
+.extra-card span {
+  color: var(--ink-2);
+  line-height: 1.5;
+}
+
+.extra-card small {
+  font-family: var(--font-mono);
+  color: var(--muted);
+}
+
+@media (max-width: 860px) {
+  .extra-grid {
+    grid-template-columns: 1fr;
+  }
 }
 
 .stat {

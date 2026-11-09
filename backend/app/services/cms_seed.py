@@ -29,6 +29,8 @@ DEFAULT_MENU = [
     ("Web", "/web-version", "web-version", "i-lucide-globe", 60),
     # Справка собирается из инструкции веб-ТГИД (frontend/scripts/sync-manual.mjs), страницы CMS у неё нет.
     ("Документация", "/docs", None, "i-lucide-book-open", 70),
+    # Курс собирается из docs/course веб-ТГИД (frontend/scripts/sync-course.mjs).
+    ("Обучение", "/learn", None, "i-lucide-graduation-cap", 75),
 ]
 
 DEFAULT_SETTINGS = [

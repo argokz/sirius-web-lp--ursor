@@ -90,7 +90,8 @@ const fallbackNavItems: RemoteNavItem[] = [
   { title: 'Эксплуатация', url: '/maintenance', icon: 'i-lucide-wrench' },
   { title: 'Решения', url: '/solutions', icon: 'i-lucide-network' },
   { title: 'Web', url: '/web-version', icon: 'i-lucide-globe' },
-  { title: 'Документация', url: '/docs', icon: 'i-lucide-book-open' }
+  { title: 'Документация', url: '/docs', icon: 'i-lucide-book-open' },
+  { title: 'Обучение', url: '/learn', icon: 'i-lucide-graduation-cap' }
 ]
 
 const { data: remoteNavigation } = useAsyncData<RemoteNavItem[]>(

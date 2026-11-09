@@ -65,3 +65,16 @@ export const getManualTroubles = () => manual.sections.flatMap((section) =>
     .filter((page): page is ManualPage => Boolean(page?.troubles.length))
     .map((page) => ({ section: section.id, id: page.key, url: page.url, title: page.title, troubles: page.troubles }))
 )
+
+/** Сквозные ролики для витрин сайта: карточки и один ролик для показа на странице */
+const FEATURED_JOURNEY = 'journeys/incident'
+
+export const getManualJourneys = () => {
+  const section = manual.sections.find((item) => item.id === 'journeys')
+  const items = (section?.pageIds || []).map((key) => catalog.pages[key]).filter((card): card is ManualPageCard => Boolean(card))
+  const featured = manual.pages[FEATURED_JOURNEY] || null
+  return {
+    featured: featured?.video ? { key: featured.key, title: featured.title, summary: featured.summary, url: featured.url, video: featured.video } : null,
+    items
+  }
+}
