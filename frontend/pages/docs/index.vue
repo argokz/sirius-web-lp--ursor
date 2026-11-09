@@ -2,9 +2,9 @@
   <div class="page docs-home">
     <section class="docs-hero">
       <div class="container">
-        <UBadge color="primary" variant="subtle" size="lg">Документация и справка</UBadge>
-        <h1 class="display-title">Справка по веб-ТГИД</h1>
-        <p class="lead">
+        <span v-reveal class="eyebrow">Документация · {{ pageCount }} страниц · обновляется с системой</span>
+        <h1 v-reveal="60" class="display-title">Справка по <span class="marker">веб-ТГИД</span></h1>
+        <p v-reveal="120" class="lead">
           Одна страница — одна функция: как она работает, что нужно для работы, шаги со снимками экрана,
           примеры, видео и что делать, если не получается. Отдельно — для администратора и разработчика.
         </p>
@@ -56,7 +56,7 @@
         <div class="container">
           <span class="eyebrow">С чего начать</span>
           <h2 class="section-title">Первые шаги в системе</h2>
-          <div class="start-grid">
+          <div v-reveal.stagger class="start-grid">
             <NuxtLink v-for="page in startPages" :key="page.key" :to="page.url" class="start-card card">
               <img v-if="page.cover" :src="page.cover.src" :alt="page.cover.alt" :width="page.cover.width" :height="page.cover.height" loading="lazy" decoding="async">
               <div>
@@ -68,11 +68,19 @@
         </div>
       </section>
 
+      <section class="section-tight">
+        <div class="container">
+          <span v-reveal class="eyebrow">По роли</span>
+          <h2 v-reveal="60" class="section-title">Что читать именно вам</h2>
+          <RolePaths v-reveal="120" class="roles-block" />
+        </div>
+      </section>
+
       <section v-if="journeyPages.length" class="section-tight">
         <div class="container">
           <span class="eyebrow">Сквозные сценарии</span>
           <h2 class="section-title">Рабочая задача от начала до конца — за 2 минуты</h2>
-          <div class="journey-grid">
+          <div v-reveal.stagger class="journey-grid">
             <NuxtLink v-for="page in journeyPages" :key="page.key" :to="page.url" class="journey-card card">
               <UIcon name="i-lucide-circle-play" class="journey-play" />
               <strong>{{ page.title }}</strong>
@@ -86,7 +94,7 @@
         <div class="container">
           <span class="eyebrow">Разделы</span>
           <h2 class="section-title">Все функции по разделам</h2>
-          <div class="section-grid">
+          <div v-reveal.stagger class="section-grid">
             <article v-for="section in sections" :key="section.id" class="section-card card card-pad">
               <NuxtLink :to="`/docs/${section.slug}`" class="section-card-head">
                 <div class="icon-box">
@@ -183,6 +191,10 @@ useSEO({
 </script>
 
 <style scoped>
+.roles-block {
+  margin-top: 32px;
+}
+
 .docs-hero {
   padding: 136px 0 56px;
   border-bottom: 1px solid var(--line);

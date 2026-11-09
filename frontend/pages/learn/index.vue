@@ -2,9 +2,9 @@
   <div class="page learn-home">
     <section class="learn-hero">
       <div class="container">
-        <UBadge color="primary" variant="subtle" size="lg">Обучение</UBadge>
-        <h1 class="display-title">Курс по веб-ТГИД</h1>
-        <p class="lead">
+        <span v-reveal class="eyebrow">Обучение · бесплатно · без регистрации</span>
+        <h1 v-reveal="60" class="display-title">Курс по <span class="marker">веб-ТГИД</span></h1>
+        <p v-reveal="120" class="lead">
           Теория, которая объясняет, почему система считает именно так, задания с ответами и тесты с проверкой.
           Выберите трек по своей работе — уроки идут от простого к сложному, в конце трека — итоговый тест.
           Вход не нужен: пройденное запоминает ваш браузер.
@@ -22,7 +22,7 @@
       <div class="container">
         <span class="eyebrow">Треки</span>
         <h2 class="section-title">Выберите, с чего начать</h2>
-        <div v-if="catalog" class="track-grid">
+        <div v-if="catalog" v-reveal.stagger class="track-grid">
           <article v-for="track in catalog.tracks" :key="track.id" class="track-card card">
             <div class="track-top">
               <UIcon :name="TRACK_ICONS[track.id] || 'i-lucide-book-open'" class="track-icon" />
@@ -50,6 +50,14 @@
             </div>
           </article>
         </div>
+      </div>
+    </section>
+
+    <section class="section-tight">
+      <div class="container">
+        <span v-reveal class="eyebrow">Справка по роли</span>
+        <h2 v-reveal="60" class="section-title">Урок объясняет, справка показывает, где нажать</h2>
+        <RolePaths v-reveal="120" class="roles-block" />
       </div>
     </section>
 
@@ -109,6 +117,10 @@ useSeoMeta({
 </script>
 
 <style scoped>
+.roles-block {
+  margin-top: 32px;
+}
+
 .learn-hero {
   padding: 136px 0 56px;
   border-bottom: 1px solid var(--line);

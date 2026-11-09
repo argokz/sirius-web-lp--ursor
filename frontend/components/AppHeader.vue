@@ -1,5 +1,6 @@
 <template>
   <header class="site-header" :class="{ 'site-header-scrolled': isScrolled }">
+    <SiteHud class="header-hud" />
     <div class="container header-inner">
       <NuxtLink to="/" class="brand" aria-label="Sirius">
         <SiriusLogo :width="146" />
@@ -17,6 +18,15 @@
       </nav>
 
       <div class="header-actions">
+        <button
+          class="search-btn"
+          type="button"
+          aria-label="Поиск по сайту, справке и курсу"
+          title="Поиск по сайту, справке и курсу — Ctrl K"
+          @click="searchOpen = true"
+        >
+          <UIcon name="i-lucide-search" />
+        </button>
         <UButton to="/contacts" variant="ghost" color="neutral" class="desktop-action">
           Контакты
         </UButton>
@@ -80,6 +90,7 @@ interface RemoteNavItem {
 
 const config = useRuntimeConfig()
 const menuOpen = ref(false)
+const searchOpen = useState('site-search-open', () => false)
 const isScrolled = ref(false)
 
 const fallbackNavItems: RemoteNavItem[] = [
@@ -216,6 +227,30 @@ onUnmounted(() => {
   transform: scaleX(1);
 }
 
+/* Девять пунктов меню занимают почти всю ширину: поиск — только значком, подсказка Ctrl K — во всплывающей подписи. */
+.search-btn {
+  width: 38px;
+  height: 38px;
+  display: grid;
+  place-items: center;
+  border: 1px solid var(--line-strong);
+  border-radius: var(--radius-sm);
+  color: var(--ink-2);
+  background: rgba(251, 250, 247, 0.7);
+  cursor: pointer;
+  transition: border-color 0.2s ease, color 0.2s ease;
+}
+
+.search-btn:hover {
+  border-color: var(--ink);
+  color: var(--ink);
+}
+
+.search-btn svg {
+  width: 17px;
+  height: 17px;
+}
+
 .header-actions {
   display: flex;
   align-items: center;
@@ -294,15 +329,22 @@ onUnmounted(() => {
   padding-left: 12px;
 }
 
-/* Контакты остаются в подвале и мобильном меню; в шапке им не хватает места рядом с восемью пунктами. */
-@media (max-width: 1279px) {
+/* Контакты остаются в подвале и мобильном меню; в шапке им не хватает места рядом с девятью пунктами. */
+@media (max-width: 1299px) {
   .desktop-action {
     display: none;
   }
 }
 
-/* Восемь пунктов меню, логотип и «Демо» занимают около 1060 px — уже этого меню уходит в боковую панель. */
-@media (max-width: 1139px) {
+/* Полоса координат — только на широком экране: на телефоне она съедает первый экран. */
+@media (max-width: 767px) {
+  .header-hud {
+    display: none;
+  }
+}
+
+/* Девять пунктов меню, логотип, поиск и «Демо» занимают около 1140 px — уже этого меню уходит в боковую панель. */
+@media (max-width: 1199px) {
   .desktop-nav {
     display: none;
   }
