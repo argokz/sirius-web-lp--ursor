@@ -10,7 +10,8 @@
         "preview": "nuxt preview --port 3006",
         "postinstall": "nuxt prepare",
         "start": "node .output/server/index.mjs",
-        "manual:sync": "node scripts/sync-manual.mjs"
+        "manual:sync": "node scripts/sync-manual.mjs",
+        "course:sync": "node scripts/sync-course.mjs"
     },
     "dependencies": {
         "@nuxt/image": "^2.0.0",

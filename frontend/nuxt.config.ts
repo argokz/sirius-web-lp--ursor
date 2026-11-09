@@ -8,6 +8,14 @@ const manualUrls = () => {
   return ['/docs', '/docs/troubleshooting', ...sectionUrls, ...pageUrls]
 }
 
+// Адреса курса — из данных scripts/sync-course.mjs (итоговые тесты не индексируются).
+const courseUrls = () => {
+  const course = JSON.parse(readFileSync(new URL('./server/data/course.json', import.meta.url), 'utf8'))
+  const trackUrls = course.tracks.map((track: { id: string }) => `/learn/${track.id}`)
+  const lessonUrls = Object.values(course.lessons).map((lesson: any) => ({ loc: lesson.url, lastmod: course.generatedAt }))
+  return ['/learn', ...trackUrls, ...lessonUrls]
+}
+
 const securityHeaders = {
   'X-Content-Type-Options': 'nosniff',
   'X-Frame-Options': 'SAMEORIGIN',
@@ -25,7 +33,8 @@ export default defineNuxtConfig({
   },
   modules: ['@pinia/nuxt', '@nuxt/image', '@nuxtjs/sitemap', '@nuxt/ui'],
   css: [
-    '~/assets/css/main.css'
+    '~/assets/css/main.css',
+    '~/assets/css/doc-body.css'
   ],
   // Сайт рисуется только в светлой «бумажной» теме.
   ui: {
@@ -72,7 +81,7 @@ export default defineNuxtConfig({
   },
   sitemap: {
     exclude: ['/admin/**', '/login'],
-    urls: manualUrls
+    urls: () => [...manualUrls(), ...courseUrls()]
   },
   typescript: {
     strict: false,

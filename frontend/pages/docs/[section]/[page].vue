@@ -303,123 +303,6 @@ useSEO({
   font-size: 0.9rem;
 }
 
-.doc-body {
-  margin-top: 12px;
-  color: #1e293b;
-  font-size: 1.02rem;
-  line-height: 1.7;
-}
-
-.doc-body :deep(h2) {
-  margin: 40px 0 0;
-  padding-top: 8px;
-  color: var(--ink);
-  font-size: 1.45rem;
-  font-family: var(--serif);
-  font-weight: 400;
-  letter-spacing: -0.01em;
-  scroll-margin-top: 96px;
-}
-
-.doc-body :deep(h3) {
-  margin: 28px 0 0;
-  font-size: 1.15rem;
-  font-weight: 650;
-}
-
-.doc-body :deep(p) {
-  margin: 12px 0 0;
-}
-
-.doc-body :deep(ul) {
-  margin: 14px 0 0;
-  padding-left: 22px;
-  list-style: disc;
-}
-
-.doc-body :deep(ul li) {
-  margin-top: 6px;
-}
-
-.doc-body :deep(ol) {
-  margin: 18px 0 0;
-  padding: 0;
-  list-style: none;
-  counter-reset: step;
-}
-
-.doc-body :deep(ol > li) {
-  position: relative;
-  margin-top: 22px;
-  padding-left: 46px;
-  counter-increment: step;
-}
-
-.doc-body :deep(ol > li::before) {
-  content: counter(step, decimal-leading-zero);
-  position: absolute;
-  top: 0;
-  left: 0;
-  display: grid;
-  width: 32px;
-  height: 28px;
-  place-items: center;
-  border-top: 1px solid var(--ink);
-  color: var(--accent);
-  font-family: var(--mono);
-  font-size: 0.78rem;
-  font-weight: 500;
-}
-
-.doc-body :deep(ol > li > p:first-child) {
-  margin-top: 0;
-}
-
-.doc-body :deep(img) {
-  display: block;
-  width: 100%;
-  height: auto;
-  margin-top: 4px;
-  border: 1px solid var(--line);
-  border-radius: var(--radius);
-  cursor: zoom-in;
-}
-
-.doc-body :deep(a) {
-  color: var(--ink);
-  font-weight: 600;
-  text-decoration: underline;
-  text-underline-offset: 3px;
-}
-
-.doc-body :deep(code) {
-  padding: 2px 6px;
-  border-radius: 5px;
-  background: var(--panel-soft);
-  font-size: 0.92em;
-}
-
-.doc-body :deep(table) {
-  display: block;
-  overflow-x: auto;
-  width: 100%;
-  margin-top: 16px;
-  border-collapse: collapse;
-}
-
-.doc-body :deep(th),
-.doc-body :deep(td) {
-  padding: 10px 12px;
-  border: 1px solid var(--line);
-  text-align: left;
-  vertical-align: top;
-}
-
-.doc-body :deep(th) {
-  background: var(--panel-soft);
-  font-weight: 650;
-}
-
 .doc-related {
   margin-top: 44px;
   scroll-margin-top: 96px;
@@ -602,15 +485,6 @@ useSEO({
 
   .doc-meta div {
     gap: 4px;
-  }
-
-  .doc-body :deep(ol > li) {
-    padding-left: 0;
-  }
-
-  .doc-body :deep(ol > li::before) {
-    position: static;
-    margin-bottom: 8px;
   }
 
   .doc-cta {

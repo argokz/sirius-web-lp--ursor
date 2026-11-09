@@ -52,3 +52,5 @@ coverage/
 frontend/public/manual/
 frontend/server/data/manual.json
 frontend/manual-media/
+frontend/public/course/
+frontend/server/data/course.json

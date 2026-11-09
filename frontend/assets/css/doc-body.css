@@ -1,0 +1,128 @@
+/* Текст справки и уроков курса (HTML из scripts/sync-manual.mjs и sync-course.mjs): класс .doc-body */
+.doc-body {
+  margin-top: 12px;
+  color: #1e293b;
+  font-size: 1.02rem;
+  line-height: 1.7;
+}
+
+.doc-body h2 {
+  margin: 40px 0 0;
+  padding-top: 8px;
+  color: var(--ink);
+  font-size: 1.45rem;
+  font-family: var(--serif);
+  font-weight: 400;
+  letter-spacing: -0.01em;
+  scroll-margin-top: 96px;
+}
+
+.doc-body h3 {
+  margin: 28px 0 0;
+  font-size: 1.15rem;
+  font-weight: 650;
+}
+
+.doc-body p {
+  margin: 12px 0 0;
+}
+
+.doc-body ul {
+  margin: 14px 0 0;
+  padding-left: 22px;
+  list-style: disc;
+}
+
+.doc-body ul li {
+  margin-top: 6px;
+}
+
+.doc-body ol {
+  margin: 18px 0 0;
+  padding: 0;
+  list-style: none;
+  counter-reset: step;
+}
+
+.doc-body ol > li {
+  position: relative;
+  margin-top: 22px;
+  padding-left: 46px;
+  counter-increment: step;
+}
+
+.doc-body ol > li::before {
+  content: counter(step, decimal-leading-zero);
+  position: absolute;
+  top: 0;
+  left: 0;
+  display: grid;
+  width: 32px;
+  height: 28px;
+  place-items: center;
+  border-top: 1px solid var(--ink);
+  color: var(--accent);
+  font-family: var(--mono);
+  font-size: 0.78rem;
+  font-weight: 500;
+}
+
+.doc-body ol > li > p:first-child {
+  margin-top: 0;
+}
+
+.doc-body img {
+  display: block;
+  width: 100%;
+  height: auto;
+  margin-top: 4px;
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  cursor: zoom-in;
+}
+
+.doc-body a {
+  color: var(--ink);
+  font-weight: 600;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+.doc-body code {
+  padding: 2px 6px;
+  border-radius: 5px;
+  background: var(--panel-soft);
+  font-size: 0.92em;
+}
+
+.doc-body table {
+  display: block;
+  overflow-x: auto;
+  width: 100%;
+  margin-top: 16px;
+  border-collapse: collapse;
+}
+
+.doc-body th,
+.doc-body td {
+  padding: 10px 12px;
+  border: 1px solid var(--line);
+  text-align: left;
+  vertical-align: top;
+}
+
+.doc-body th {
+  background: var(--panel-soft);
+  font-weight: 650;
+}
+
+@media (max-width: 640px) {
+  .doc-body ol > li {
+    padding-left: 0;
+  }
+
+  .doc-body ol > li::before {
+    position: static;
+    margin-bottom: 8px;
+  }
+}
