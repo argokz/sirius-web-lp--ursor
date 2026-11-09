@@ -58,7 +58,7 @@ pip install -r requirements.txt
 
 3. Создайте файл `.env`:
 ```env
-DATABASE_URL=postgresql://postgres:Danil228@localhost:5440/sirius_db
+DATABASE_URL=postgresql://postgres:CHANGE_ME@localhost:5440/sirius_db
 SECRET_KEY=your-secret-key-change-in-production
 API_BASE_URL=http://localhost:8009
 ```
@@ -125,11 +125,27 @@ npm run preview
 - Главная страница с hero секцией
 - О компании
 - Описание продукта ТГИД-07
-- Возможности системы
+- Возможности системы — все функции по 12 модулям (`/features`)
+- Документация и справка (`/docs`) — инструкция пользователя веб-ТГИД с поиском
 - Отраслевые решения
 - Контакты
 - Форма заявки на демо
 - Блог
+
+### Документация и справка
+
+Справка собирается из инструкции веб-ТГИД (`docs/manual` репозитория tgid-app): тексты — в
+`frontend/server/data/manual.json`, снимки и видео — в `frontend/public/manual/`. После обновления
+инструкции выполните:
+
+```bash
+cd frontend
+npm run manual:sync -- H:/projects/tgid-app/web-itwin-v4/docs/manual
+```
+
+Без аргумента берётся `../../tgid-app/web-itwin-v4/docs/manual` относительно `frontend` (или путь из `MANUAL_SRC`).
+Описание модулей для витрины («Возможности», блоки на главной и страницах разделов) — в
+`frontend/utils/productModules.ts`; список функций внутри модуля берётся из справки.
 
 ### Админ-панель (CRM)
 - Управление контентом (CRUD)
@@ -143,7 +159,10 @@ npm run preview
 ### Публичные
 - `GET /api/pages/{slug}/content` - Получение контента страницы
 - `POST /api/demo-requests` - Создание заявки на демо
-- `POST /api/contact` - Отправка сообщения
+- `POST /api/contact` - Отправка сообщения (сохраняется в заявки админки)
+
+Формы и вход ограничены по частоте с одного адреса (`app/rate_limit.py`). Описание API (`/docs`, `/openapi.json`)
+открывается только при `ENABLE_API_DOCS=true`. Без `DATABASE_URL` и `SECRET_KEY` (от 32 символов) API не запустится.
 
 ### Защищенные (требуют авторизации)
 - `POST /api/auth/login` - Вход

@@ -1,28 +1,33 @@
-from fastapi import APIRouter
-from pydantic import BaseModel, EmailStr
 from typing import Optional
+
+from fastapi import APIRouter, Depends
+from pydantic import BaseModel, EmailStr, Field
+from sqlalchemy.orm import Session
+
+from app.database import get_db
+from app.models.demo import DemoRequest
+from app.rate_limit import rate_limit
 
 router = APIRouter()
 
+
 class ContactMessage(BaseModel):
-    name: str
+    name: str = Field(min_length=1, max_length=200)
     email: EmailStr
-    phone: Optional[str] = None
-    message: str
+    phone: Optional[str] = Field(default=None, max_length=50)
+    message: str = Field(min_length=1, max_length=4000)
 
-@router.post("/contact")
-async def send_contact_message(
-    message: ContactMessage
-):
-    # Here you would integrate with email service (e.g., SendGrid, SMTP)
-    # For now, just log and return success
-    print(f"Contact message from {message.email}: {message.message}")
-    
-    # TODO: Send email notification
-    # TODO: Save to database if needed
-    
-    return {
-        "message": "Contact message received",
-        "status": "success"
-    }
 
+@router.post("/contact", dependencies=[Depends(rate_limit("forms", limit=5, window_seconds=600))])
+def send_contact_message(message: ContactMessage, db: Session = Depends(get_db)):
+    # Сообщения с «Контактов» попадают в тот же список заявок админки, что и заявки на демо.
+    db.add(
+        DemoRequest(
+            full_name=message.name.strip(),
+            email=message.email,
+            phone=(message.phone or "").strip() or None,
+            message=f"[Сообщение со страницы «Контакты»]\n{message.message.strip()}",
+        )
+    )
+    db.commit()
+    return {"message": "Contact message received", "status": "success"}

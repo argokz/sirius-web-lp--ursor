@@ -6,10 +6,9 @@ from dotenv import load_dotenv
 
 load_dotenv()
 
-DATABASE_URL = os.getenv(
-    "DATABASE_URL",
-    "postgresql://postgres:Danil228@localhost:5440/sirius_db"
-)
+DATABASE_URL = os.getenv("DATABASE_URL", "")
+if not DATABASE_URL:
+    raise RuntimeError("DATABASE_URL не задан: укажите строку подключения в backend/.env")
 
 # Извлекаем параметры подключения для создания БД
 def parse_db_url(url: str):

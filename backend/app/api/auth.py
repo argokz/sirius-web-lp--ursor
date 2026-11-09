@@ -4,7 +4,10 @@ from sqlalchemy.orm import Session
 from datetime import timedelta
 import os
 from app.database import get_db
+from app.rate_limit import rate_limit
 from app.services.auth import (
+    ALGORITHM,
+    SECRET_KEY,
     authenticate_user,
     create_access_token,
     create_user as create_user_service,
@@ -32,8 +35,7 @@ def get_current_user(
     )
     
     try:
-        SECRET_KEY = os.getenv("SECRET_KEY", "your-secret-key-change-in-production")
-        payload = jwt.decode(token, SECRET_KEY, algorithms=["HS256"])
+        payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
         email: str = payload.get("sub")
         if email is None:
             raise credentials_exception
@@ -54,7 +56,11 @@ def get_current_superuser(current_user: User = Depends(get_current_user)) -> Use
         )
     return current_user
 
-@router.post("/register", response_model=UserResponse)
+@router.post(
+    "/register",
+    response_model=UserResponse,
+    dependencies=[Depends(rate_limit("auth", limit=10, window_seconds=300))],
+)
 def register(user: UserCreate, db: Session = Depends(get_db)):
     users_count = db.query(User).count()
     is_first_user = users_count == 0
@@ -74,7 +80,11 @@ def register(user: UserCreate, db: Session = Depends(get_db)):
         )
     return create_user_service(db, user, is_superuser=is_first_user)
 
-@router.post("/login", response_model=Token)
+@router.post(
+    "/login",
+    response_model=Token,
+    dependencies=[Depends(rate_limit("auth", limit=10, window_seconds=300))],
+)
 def login(
     form_data: OAuth2PasswordRequestForm = Depends(),
     db: Session = Depends(get_db)

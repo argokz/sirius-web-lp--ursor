@@ -7,7 +7,10 @@ from app.models.user import User
 from app.schemas.auth import UserCreate
 import os
 
-SECRET_KEY = os.getenv("SECRET_KEY", "your-secret-key-change-in-production")
+# Без своего ключа любой, кто знает общеизвестный ключ по умолчанию, подделает токен администратора.
+SECRET_KEY = os.getenv("SECRET_KEY", "")
+if len(SECRET_KEY) < 32 or SECRET_KEY == "your-secret-key-change-in-production":
+    raise RuntimeError("SECRET_KEY не задан или слишком короткий: укажите в backend/.env случайную строку от 32 символов")
 ALGORITHM = "HS256"
 ACCESS_TOKEN_EXPIRE_MINUTES = 30
 

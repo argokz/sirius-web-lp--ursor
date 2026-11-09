@@ -10,6 +10,21 @@ from app.schemas.auth import (
 from app.schemas.content import ContentItemCreate, ContentItemUpdate, ContentItemResponse
 from app.schemas.demo import DemoRequestCreate, DemoRequestResponse, DemoRequestStatusUpdate
 from app.schemas.seo import SEOMetadataCreate, SEOMetadataUpdate, SEOMetadataResponse
+from app.schemas.cms import (
+    MenuItemCreate,
+    MenuItemResponse,
+    MenuItemUpdate,
+    PageBlockCreate,
+    PageBlockResponse,
+    PageBlockUpdate,
+    PageCreate,
+    PageResponse,
+    PageUpdate,
+    PageViewCreate,
+    PublicPageResponse,
+    SiteSettingResponse,
+    SiteSettingUpsert,
+)
 
 __all__ = [
     "Token",
@@ -28,5 +43,18 @@ __all__ = [
     "SEOMetadataCreate",
     "SEOMetadataUpdate",
     "SEOMetadataResponse",
+    "MenuItemCreate",
+    "MenuItemResponse",
+    "MenuItemUpdate",
+    "PageBlockCreate",
+    "PageBlockResponse",
+    "PageBlockUpdate",
+    "PageCreate",
+    "PageResponse",
+    "PageUpdate",
+    "PageViewCreate",
+    "PublicPageResponse",
+    "SiteSettingResponse",
+    "SiteSettingUpsert",
 ]
 

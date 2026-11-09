@@ -66,7 +66,7 @@ alembic downgrade -1
 Параметры подключения настраиваются в `.env`:
 
 ```env
-DATABASE_URL=postgresql://postgres:Danil228@localhost:5440/sirius_db
+DATABASE_URL=postgresql://postgres:CHANGE_ME@localhost:5440/sirius_db
 ```
 
 Формат: `postgresql://user:password@host:port/database`

@@ -29,7 +29,7 @@ CREATE DATABASE sirius_db;
 - Host: localhost
 - Port: 5440
 - User: postgres
-- Password: Danil228
+- Password: CHANGE_ME (см. backend/.env)
 - Database: sirius_db
 
 ### 3. Настройка Backend
@@ -52,7 +52,7 @@ pip install -r requirements.txt
 # Создайте файл .env
 copy .env.example .env
 # Или вручную создайте .env с содержимым:
-# DATABASE_URL=postgresql://postgres:Danil228@localhost:5440/sirius_db
+# DATABASE_URL=postgresql://postgres:CHANGE_ME@localhost:5440/sirius_db
 # SECRET_KEY=your-secret-key-change-in-production
 # API_BASE_URL=http://localhost:8009
 
